@@ -19,7 +19,7 @@ function NewApplication() {
       <section className="panel p-6 md:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">New record</p>
         <h1 className="mt-3 text-4xl font-semibold">Add an application</h1>
-        <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+        <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
           Capture the essentials now so follow-ups, interviews, and status updates stay anchored to one clear record.
         </p>
       </section>

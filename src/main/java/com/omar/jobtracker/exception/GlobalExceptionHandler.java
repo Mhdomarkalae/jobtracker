@@ -4,6 +4,8 @@ import com.omar.jobtracker.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,6 +45,23 @@ public class GlobalExceptionHandler {
         }
 
         return buildErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ErrorResponse handleConflict(EmailAlreadyInUseException exception) {
+        return buildErrorResponse(exception.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({
+            BadCredentialsException.class,
+            AuthenticationCredentialsNotFoundException.class
+    })
+    public ErrorResponse handleUnauthorized(RuntimeException exception) {
+        return buildErrorResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     private String formatFieldError(FieldError fieldError) {

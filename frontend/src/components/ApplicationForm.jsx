@@ -98,7 +98,7 @@ function ApplicationForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {submitError ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
           {submitError}
         </div>
       ) : null}
@@ -116,7 +116,7 @@ function ApplicationForm({
             onChange={handleChange}
             placeholder="Acme Corp"
           />
-          {errors.companyName ? <p className="mt-2 text-sm text-rose-600">{errors.companyName}</p> : null}
+          {errors.companyName ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{errors.companyName}</p> : null}
         </div>
 
         <div>
@@ -131,7 +131,7 @@ function ApplicationForm({
             onChange={handleChange}
             placeholder="Backend Engineer"
           />
-          {errors.positionTitle ? <p className="mt-2 text-sm text-rose-600">{errors.positionTitle}</p> : null}
+          {errors.positionTitle ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{errors.positionTitle}</p> : null}
         </div>
 
         <div>
@@ -161,7 +161,7 @@ function ApplicationForm({
             value={formValues.dateApplied}
             onChange={handleChange}
           />
-          {errors.dateApplied ? <p className="mt-2 text-sm text-rose-600">{errors.dateApplied}</p> : null}
+          {errors.dateApplied ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{errors.dateApplied}</p> : null}
         </div>
 
         <div>

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/applications")
+@RequestMapping({"/api/applications", "/api/jobs"})
 @RequiredArgsConstructor
 public class ApplicationController {
 

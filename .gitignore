@@ -38,3 +38,9 @@ frontend/dist/
 
 ### Local tools ###
 .tools/
+
+### Environment ###
+.env
+.env.*
+!.env.example
+!frontend/.env.example

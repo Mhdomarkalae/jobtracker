@@ -5,21 +5,21 @@ function linkClassName({ isActive }) {
     'rounded-full px-4 py-2 text-sm font-semibold transition',
     isActive
       ? 'bg-brand-600 text-white shadow-sm'
-      : 'text-slate-600 hover:bg-white hover:text-slate-900',
+      : 'text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-slate-50',
   ].join(' ')
 }
 
-function Navbar() {
+function Navbar({ theme, onToggleTheme, user, onLogout }) {
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-950/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:border-slate-300"
+            className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white">
               JT
@@ -28,7 +28,7 @@ function Navbar() {
               <span className="block text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
                 Job Tracker
               </span>
-              <span className="block text-sm font-semibold text-slate-900">
+              <span className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
                 Application Pipeline
               </span>
             </span>
@@ -44,6 +44,12 @@ function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 lg:block">
+            {user?.email}
+          </div>
+          <button type="button" className="button-secondary" onClick={onToggleTheme}>
+            Theme: {theme === 'dark' ? 'Dark' : 'Light'}
+          </button>
           <nav className="flex items-center gap-2 md:hidden">
             <NavLink to="/" className={linkClassName} end>
               Dashboard
@@ -58,6 +64,9 @@ function Navbar() {
             onClick={() => navigate('/applications/new')}
           >
             Add Application
+          </button>
+          <button type="button" className="button-secondary" onClick={onLogout}>
+            Log out
           </button>
         </div>
       </div>

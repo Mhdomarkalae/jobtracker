@@ -82,7 +82,7 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
           {error}
         </div>
       ) : null}
@@ -120,7 +120,7 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
             onChange={handleChange}
           />
           {fieldErrors.scheduledDate ? (
-            <p className="mt-2 text-sm text-rose-600">{fieldErrors.scheduledDate}</p>
+            <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{fieldErrors.scheduledDate}</p>
           ) : null}
         </div>
 
@@ -170,13 +170,13 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
         />
       </div>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+      <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-950/70 dark:text-slate-200">
         <input
           type="checkbox"
           name="completed"
           checked={formValues.completed}
           onChange={handleChange}
-          className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+          className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-900"
         />
         Mark interview as completed
       </label>

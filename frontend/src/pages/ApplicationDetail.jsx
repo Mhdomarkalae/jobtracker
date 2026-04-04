@@ -168,7 +168,7 @@ function ApplicationDetail() {
       <div className="panel flex min-h-[320px] items-center justify-center p-10">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-brand-100 border-t-brand-600" />
-          <p className="mt-4 text-sm text-slate-500">Loading application...</p>
+          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Loading application...</p>
         </div>
       </div>
     )
@@ -177,8 +177,8 @@ function ApplicationDetail() {
   if (!application) {
     return (
       <div className="panel px-6 py-14 text-center">
-        <p className="text-2xl font-semibold text-slate-950">Application not found</p>
-        <p className="mt-3 text-sm text-slate-500">{error || 'The requested application could not be loaded.'}</p>
+        <p className="text-2xl font-semibold text-slate-950 dark:text-slate-50">Application not found</p>
+        <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{error || 'The requested application could not be loaded.'}</p>
         <Link to="/applications" className="button-primary mt-6">
           Back to Applications
         </Link>
@@ -189,7 +189,7 @@ function ApplicationDetail() {
   return (
     <div className="space-y-6">
       <section className="panel overflow-hidden">
-        <div className="border-b border-slate-200/80 bg-slate-950 px-6 py-8 text-white md:px-8">
+        <div className="border-b border-slate-200/80 bg-slate-950 px-6 py-8 text-white md:px-8 dark:border-slate-800/80 dark:bg-slate-900">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">Application detail</p>
@@ -217,14 +217,14 @@ function ApplicationDetail() {
         <div className="grid gap-6 p-6 md:p-8 xl:grid-cols-[1.1fr,0.9fr]">
           <div className="space-y-6">
             {error ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">{error}</div>
             ) : null}
             {feedback.message ? (
               <div
                 className={`rounded-2xl px-4 py-3 text-sm ${
                   feedback.tone === 'error'
-                    ? 'border border-rose-200 bg-rose-50 text-rose-700'
-                    : 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                    ? 'border border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200'
+                    : 'border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
                 }`}
               >
                 {feedback.message}
@@ -235,16 +235,16 @@ function ApplicationDetail() {
               <h2 className="text-2xl font-semibold">Overview</h2>
               <dl className="mt-5 grid gap-5 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm font-semibold text-slate-500">Created</dt>
-                  <dd className="mt-1 text-base text-slate-900">{formatDateTime(application.createdAt)}</dd>
+                  <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">Created</dt>
+                  <dd className="mt-1 text-base text-slate-900 dark:text-slate-100">{formatDateTime(application.createdAt)}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-semibold text-slate-500">Updated</dt>
-                  <dd className="mt-1 text-base text-slate-900">{formatDateTime(application.updatedAt)}</dd>
+                  <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">Updated</dt>
+                  <dd className="mt-1 text-base text-slate-900 dark:text-slate-100">{formatDateTime(application.updatedAt)}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-semibold text-slate-500">Job URL</dt>
-                  <dd className="mt-1 text-base text-slate-900">
+                  <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">Job URL</dt>
+                  <dd className="mt-1 text-base text-slate-900 dark:text-slate-100">
                     {application.jobUrl ? (
                       <a href={application.jobUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700">
                         Open listing
@@ -255,15 +255,15 @@ function ApplicationDetail() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-semibold text-slate-500">Current stage</dt>
+                  <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">Current stage</dt>
                   <dd className="mt-1">
                     <StatusBadge status={application.currentStatus} />
                   </dd>
                 </div>
               </dl>
               <div className="mt-6">
-                <p className="text-sm font-semibold text-slate-500">Notes</p>
-                <p className="mt-2 whitespace-pre-wrap text-base leading-7 text-slate-700">
+                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Notes</p>
+                <p className="mt-2 whitespace-pre-wrap text-base leading-7 text-slate-700 dark:text-slate-300">
                   {application.notes || 'No notes added for this application yet.'}
                 </p>
               </div>
@@ -273,7 +273,7 @@ function ApplicationDetail() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-semibold">Interviews</h2>
-                  <p className="mt-1 text-sm text-slate-500">Manage scheduled conversations and outcomes.</p>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage scheduled conversations and outcomes.</p>
                 </div>
                 <button
                   type="button"
@@ -292,24 +292,24 @@ function ApplicationDetail() {
                   application.interviews.map((interview) => (
                     <div
                       key={interview.id}
-                      className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm"
+                      className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/70"
                     >
                       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
-                          <p className="text-lg font-semibold text-slate-950">
+                          <p className="text-lg font-semibold text-slate-950 dark:text-slate-50">
                             {formatInterviewTypeLabel(interview.interviewType)}
                           </p>
-                          <p className="mt-1 text-sm text-slate-500">{formatDateTime(interview.scheduledDate)}</p>
-                          <p className="mt-3 text-sm text-slate-600">
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{formatDateTime(interview.scheduledDate)}</p>
+                          <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
                             Interviewer: {interview.interviewerName || 'Not specified'}
                           </p>
-                          <p className="mt-1 text-sm text-slate-600">
+                          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                             Duration: {interview.durationMinutes ? `${interview.durationMinutes} minutes` : 'Not set'}
                           </p>
-                          <p className="mt-1 text-sm text-slate-600">
+                          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                             Status: {interview.completed ? 'Completed' : 'Upcoming'}
                           </p>
-                          {interview.notes ? <p className="mt-3 text-sm leading-6 text-slate-600">{interview.notes}</p> : null}
+                          {interview.notes ? <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{interview.notes}</p> : null}
                         </div>
                         <div className="flex flex-wrap gap-3">
                           <button
@@ -335,9 +335,9 @@ function ApplicationDetail() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
-                    <p className="text-lg font-semibold text-slate-900">No interviews scheduled</p>
-                    <p className="mt-2 text-sm text-slate-500">Add the next conversation to keep the timeline current.</p>
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">No interviews scheduled</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Add the next conversation to keep the timeline current.</p>
                   </div>
                 )}
               </div>
@@ -347,7 +347,7 @@ function ApplicationDetail() {
           <div className="space-y-6">
             <div className="panel-muted p-6">
               <h2 className="text-2xl font-semibold">Update status</h2>
-              <p className="mt-1 text-sm text-slate-500">Record each change and preserve the history.</p>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Record each change and preserve the history.</p>
 
               <form className="mt-6 space-y-4" onSubmit={handleStatusUpdate}>
                 <div>
@@ -390,7 +390,7 @@ function ApplicationDetail() {
                     placeholder="Capture context for the status change."
                   />
                 </div>
-                {statusError ? <p className="text-sm text-rose-600">{statusError}</p> : null}
+                {statusError ? <p className="text-sm text-rose-600 dark:text-rose-300">{statusError}</p> : null}
                 <button type="submit" className="button-primary w-full" disabled={updatingStatus}>
                   {updatingStatus ? 'Updating...' : 'Update Status'}
                 </button>
@@ -399,26 +399,26 @@ function ApplicationDetail() {
 
             <div className="panel-muted p-6">
               <h2 className="text-2xl font-semibold">Status history</h2>
-              <p className="mt-1 text-sm text-slate-500">Newest updates appear first.</p>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Newest updates appear first.</p>
 
               <div className="mt-6 space-y-4">
                 {application.statusHistory?.length ? (
                   application.statusHistory.map((entry) => (
-                    <div key={entry.id} className="relative rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm">
+                    <div key={entry.id} className="relative rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/70">
                       <div className="absolute left-0 top-5 h-8 w-1 rounded-r-full bg-brand-600" />
                       <div className="pl-3">
                         <div className="flex flex-wrap items-center gap-3">
                           <StatusBadge status={entry.status} />
-                          <span className="text-sm text-slate-500">{formatDateTime(entry.changedAt)}</span>
+                          <span className="text-sm text-slate-500 dark:text-slate-400">{formatDateTime(entry.changedAt)}</span>
                         </div>
-                        <p className="mt-3 text-sm leading-6 text-slate-600">{entry.notes || 'No notes added.'}</p>
+                        <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.notes || 'No notes added.'}</p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
-                    <p className="text-lg font-semibold text-slate-900">No status changes yet</p>
-                    <p className="mt-2 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">No status changes yet</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                       The first update you make will automatically appear here.
                     </p>
                   </div>

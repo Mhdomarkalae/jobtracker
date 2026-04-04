@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public ApplicationResponse createApplication(ApplicationRequest request) {
@@ -48,6 +49,7 @@ public class ApplicationService {
                 .salaryRange(request.getSalaryRange())
                 .location(request.getLocation())
                 .notes(request.getNotes())
+                .user(currentUserService.getCurrentUserEntity())
                 .build();
 
         Application savedApplication = applicationRepository.save(application);
@@ -56,9 +58,10 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public List<ApplicationSummaryResponse> getApplications(ApplicationStatus status) {
+        Long userId = currentUserService.getCurrentUserId();
         List<Application> applications = status == null
-                ? applicationRepository.findAll()
-                : applicationRepository.findByCurrentStatus(status);
+                ? applicationRepository.findByUserId(userId)
+                : applicationRepository.findByUserIdAndCurrentStatus(userId, status);
 
         return applications.stream()
                 .sorted(Comparator.comparing(Application::getUpdatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
@@ -98,8 +101,7 @@ public class ApplicationService {
 
     @Transactional
     public void deleteApplication(Long id) {
-        Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Application not found with id " + id));
+        Application application = findApplicationOrThrow(id);
         applicationRepository.delete(application);
     }
 
@@ -118,7 +120,7 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public AnalyticsSummaryResponse getAnalyticsSummary() {
-        List<Application> applications = applicationRepository.findAll();
+        List<Application> applications = applicationRepository.findByUserId(currentUserService.getCurrentUserId());
 
         Map<ApplicationStatus, Long> counts = new EnumMap<>(ApplicationStatus.class);
         Arrays.stream(ApplicationStatus.values()).forEach(status -> counts.put(status, 0L));
@@ -145,7 +147,7 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public AnalyticsTimelineResponse getTimeline(String groupBy) {
         String normalizedGroupBy = normalizeGroupBy(groupBy);
-        Map<String, Long> timeline = applicationRepository.findAll()
+        Map<String, Long> timeline = applicationRepository.findByUserId(currentUserService.getCurrentUserId())
                 .stream()
                 .collect(Collectors.groupingBy(
                         application -> formatPeriod(application.getDateApplied(), normalizedGroupBy),
@@ -200,7 +202,7 @@ public class ApplicationService {
     }
 
     private Application findApplicationOrThrow(Long id) {
-        return applicationRepository.findById(id)
+        return applicationRepository.findByIdAndUserId(id, currentUserService.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found with id " + id));
     }
 

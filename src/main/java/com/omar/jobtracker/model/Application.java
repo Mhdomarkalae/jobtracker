@@ -10,10 +10,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -38,7 +41,7 @@ import java.util.List;
 @Entity
 @Table(name = "applications")
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"statusHistory", "interviews"})
+@ToString(exclude = {"user", "statusHistory", "interviews"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Application {
 
@@ -73,6 +76,10 @@ public class Application {
 
     @Lob
     private String notes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

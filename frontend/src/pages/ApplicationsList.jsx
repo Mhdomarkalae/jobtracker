@@ -78,7 +78,7 @@ function ApplicationsList() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Pipeline view</p>
             <h1 className="mt-3 text-4xl font-semibold">Applications</h1>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
               Filter by stage, scan the full pipeline, and jump directly into the roles that need attention.
             </p>
           </div>
@@ -104,20 +104,20 @@ function ApplicationsList() {
       </section>
 
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">{error}</div>
       ) : null}
 
       {loading ? (
         <div className="panel flex min-h-[260px] items-center justify-center p-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-brand-100 border-t-brand-600" />
-            <p className="mt-4 text-sm text-slate-500">Loading applications...</p>
+            <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Loading applications...</p>
           </div>
         </div>
       ) : applications.length === 0 ? (
         <div className="panel px-6 py-16 text-center">
-          <p className="text-2xl font-semibold text-slate-950">{emptyMessage}</p>
-          <p className="mt-3 text-sm text-slate-500">Use the add button to create and track your next opportunity.</p>
+          <p className="text-2xl font-semibold text-slate-950 dark:text-slate-50">{emptyMessage}</p>
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Use the add button to create and track your next opportunity.</p>
           <Link to="/applications/new" className="button-primary mt-6">
             Add Application
           </Link>
@@ -140,12 +140,12 @@ function ApplicationsList() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-lg font-semibold text-slate-950">{application.companyName}</p>
-                    <p className="mt-1 text-sm text-slate-500">{application.positionTitle}</p>
+                    <p className="text-lg font-semibold text-slate-950 dark:text-slate-50">{application.companyName}</p>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{application.positionTitle}</p>
                   </div>
                   <StatusBadge status={application.currentStatus} />
                 </div>
-                <p className="mt-4 text-sm text-slate-500">Applied {formatDate(application.dateApplied)}</p>
+                <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Applied {formatDate(application.dateApplied)}</p>
                 <div className="mt-5 flex items-center gap-3">
                   <Link
                     to={`/applications/${application.id}`}
@@ -170,21 +170,21 @@ function ApplicationsList() {
           <div className="panel hidden overflow-hidden md:block">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50/90">
+                <thead className="bg-slate-50/90 dark:bg-slate-950/80">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Company
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Position
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Date Applied
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Actions
                     </th>
                   </tr>
@@ -193,17 +193,17 @@ function ApplicationsList() {
                   {applications.map((application) => (
                     <tr
                       key={application.id}
-                      className="cursor-pointer bg-white transition hover:bg-brand-50/40"
+                      className="cursor-pointer bg-white transition hover:bg-brand-50/40 dark:bg-slate-950/40 dark:hover:bg-brand-500/10"
                       onClick={() => navigate(`/applications/${application.id}`)}
                     >
                       <td className="px-6 py-5">
-                        <p className="font-semibold text-slate-950">{application.companyName}</p>
+                        <p className="font-semibold text-slate-950 dark:text-slate-50">{application.companyName}</p>
                       </td>
-                      <td className="px-6 py-5 text-slate-600">{application.positionTitle}</td>
+                      <td className="px-6 py-5 text-slate-600 dark:text-slate-300">{application.positionTitle}</td>
                       <td className="px-6 py-5">
                         <StatusBadge status={application.currentStatus} />
                       </td>
-                      <td className="px-6 py-5 text-slate-600">{formatDate(application.dateApplied)}</td>
+                      <td className="px-6 py-5 text-slate-600 dark:text-slate-300">{formatDate(application.dateApplied)}</td>
                       <td className="px-6 py-5">
                         <div className="flex justify-end gap-3">
                           <Link

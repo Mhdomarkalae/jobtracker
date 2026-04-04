@@ -19,10 +19,12 @@ public class InterviewService {
 
     private final InterviewRepository interviewRepository;
     private final ApplicationRepository applicationRepository;
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public InterviewResponse createInterview(Long applicationId, InterviewRequest request) {
-        Application application = applicationRepository.findById(applicationId)
+        Long userId = currentUserService.getCurrentUserId();
+        Application application = applicationRepository.findByIdAndUserId(applicationId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found with id " + applicationId));
 
         Interview interview = Interview.builder()
@@ -41,11 +43,11 @@ public class InterviewService {
 
     @Transactional(readOnly = true)
     public List<InterviewResponse> getInterviewsByApplicationId(Long applicationId) {
-        if (!applicationRepository.existsById(applicationId)) {
-            throw new ResourceNotFoundException("Application not found with id " + applicationId);
-        }
+        Long userId = currentUserService.getCurrentUserId();
+        applicationRepository.findByIdAndUserId(applicationId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found with id " + applicationId));
 
-        return interviewRepository.findByApplicationIdOrderByScheduledDateAsc(applicationId)
+        return interviewRepository.findByApplicationIdAndApplicationUserIdOrderByScheduledDateAsc(applicationId, userId)
                 .stream()
                 .map(this::toInterviewResponse)
                 .toList();
@@ -53,7 +55,7 @@ public class InterviewService {
 
     @Transactional
     public InterviewResponse updateInterview(Long id, InterviewRequest request) {
-        Interview interview = interviewRepository.findById(id)
+        Interview interview = interviewRepository.findByIdAndApplicationUserId(id, currentUserService.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Interview not found with id " + id));
 
         interview.setInterviewType(request.getInterviewType());
@@ -69,7 +71,7 @@ public class InterviewService {
 
     @Transactional
     public void deleteInterview(Long id) {
-        Interview interview = interviewRepository.findById(id)
+        Interview interview = interviewRepository.findByIdAndApplicationUserId(id, currentUserService.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Interview not found with id " + id));
         interviewRepository.delete(interview);
     }
