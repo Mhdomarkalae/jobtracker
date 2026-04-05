@@ -4,6 +4,7 @@ import com.omar.jobtracker.model.ApplicationStatus;
 import lombok.Builder;
 import lombok.Value;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -16,7 +17,7 @@ public class ApplicationSummaryResponse {
     String jobUrl;
     LocalDate dateApplied;
     ApplicationStatus currentStatus;
-    String salaryRange;
+    BigDecimal salary;
     String location;
     String notes;
     LocalDateTime createdAt;

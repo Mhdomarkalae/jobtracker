@@ -30,8 +30,8 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(
                 ErrorResponse.builder()
-                        .message("You do not have permission to access this resource.")
                         .timestamp(LocalDateTime.now())
+                        .message("You do not have permission to access this resource.")
                         .status(HttpStatus.FORBIDDEN.value())
                         .build()
         ));

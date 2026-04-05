@@ -29,6 +29,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,7 +71,8 @@ public class Application {
     @Column(nullable = false)
     private ApplicationStatus currentStatus;
 
-    private String salaryRange;
+    @Column(precision = 14, scale = 2)
+    private BigDecimal salary;
 
     private String location;
 

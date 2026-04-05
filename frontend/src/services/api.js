@@ -156,14 +156,26 @@ export async function getCurrentUser() {
   return data
 }
 
-export async function getApplications(status) {
+export async function getApplications(status, { page = 0, size = 50 } = {}) {
   if (isDemoSessionEnabled()) {
-    return listDemoApplications(status)
+    const items = listDemoApplications(status)
+    return {
+      content: items,
+      totalElements: items.length,
+      totalPages: 1,
+      number: 0,
+      size: items.length,
+      last: true,
+    }
   }
 
   try {
     const { data } = await api.get('/jobs', {
-      params: status ? { status } : {},
+      params: {
+        ...(status ? { status } : {}),
+        page,
+        size,
+      },
     })
     return data
   } catch (error) {
@@ -172,7 +184,15 @@ export async function getApplications(status) {
       // for the rest of the session until the user explicitly logs in again.
       enableDemoSession()
       clearStoredAuthToken()
-      return listDemoApplications(status)
+      const items = listDemoApplications(status)
+      return {
+        content: items,
+        totalElements: items.length,
+        totalPages: 1,
+        number: 0,
+        size: items.length,
+        last: true,
+      }
     }
     throw error
   }

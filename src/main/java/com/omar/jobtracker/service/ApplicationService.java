@@ -14,7 +14,10 @@ import com.omar.jobtracker.model.ApplicationStatus;
 import com.omar.jobtracker.model.Interview;
 import com.omar.jobtracker.model.StatusHistory;
 import com.omar.jobtracker.repository.ApplicationRepository;
+import com.omar.jobtracker.util.TextSanitizer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +26,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,12 +51,12 @@ public class ApplicationService {
     public ApplicationResponse createApplication(ApplicationRequest request) {
         // New applications are always attached to the currently logged-in user.
         Application application = Application.builder()
-                .companyName(request.getCompanyName())
-                .positionTitle(request.getPositionTitle())
+                .companyName(TextSanitizer.stripHtmlTags(request.getCompanyName()))
+                .positionTitle(TextSanitizer.stripHtmlTags(request.getPositionTitle()))
                 .jobUrl(request.getJobUrl())
                 .dateApplied(request.getDateApplied())
                 .currentStatus(request.getCurrentStatus())
-                .salaryRange(request.getSalaryRange())
+                .salary(request.getSalary())
                 .location(request.getLocation())
                 .notes(request.getNotes())
                 .user(currentUserService.getCurrentUserEntity())
@@ -65,18 +67,12 @@ public class ApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ApplicationSummaryResponse> getApplications(ApplicationStatus status) {
+    public Page<ApplicationSummaryResponse> getApplications(ApplicationStatus status, Pageable pageable) {
         Long userId = currentUserService.getCurrentUserId();
-        // Repositories expose user-scoped methods so a user can never "forget"
-        // to filter by ownership in calling code.
-        List<Application> applications = status == null
-                ? applicationRepository.findByUserId(userId)
-                : applicationRepository.findByUserIdAndCurrentStatus(userId, status);
-
-        return applications.stream()
-                .sorted(Comparator.comparing(Application::getUpdatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
-                .map(this::toApplicationSummaryResponse)
-                .toList();
+        Page<Application> page = status == null
+                ? applicationRepository.findByUserId(userId, pageable)
+                : applicationRepository.findByUserIdAndCurrentStatus(userId, status, pageable);
+        return page.map(this::toApplicationSummaryResponse);
     }
 
     @Transactional(readOnly = true)
@@ -92,12 +88,12 @@ public class ApplicationService {
 
         ApplicationStatus previousStatus = application.getCurrentStatus();
 
-        application.setCompanyName(request.getCompanyName());
-        application.setPositionTitle(request.getPositionTitle());
+        application.setCompanyName(TextSanitizer.stripHtmlTags(request.getCompanyName()));
+        application.setPositionTitle(TextSanitizer.stripHtmlTags(request.getPositionTitle()));
         application.setJobUrl(request.getJobUrl());
         application.setDateApplied(request.getDateApplied());
         application.setCurrentStatus(request.getCurrentStatus());
-        application.setSalaryRange(request.getSalaryRange());
+        application.setSalary(request.getSalary());
         application.setLocation(request.getLocation());
         application.setNotes(request.getNotes());
 
@@ -236,7 +232,7 @@ public class ApplicationService {
                 .jobUrl(application.getJobUrl())
                 .dateApplied(application.getDateApplied())
                 .currentStatus(application.getCurrentStatus())
-                .salaryRange(application.getSalaryRange())
+                .salary(application.getSalary())
                 .location(application.getLocation())
                 .notes(application.getNotes())
                 .createdAt(application.getCreatedAt())
@@ -262,7 +258,7 @@ public class ApplicationService {
                 .jobUrl(application.getJobUrl())
                 .dateApplied(application.getDateApplied())
                 .currentStatus(application.getCurrentStatus())
-                .salaryRange(application.getSalaryRange())
+                .salary(application.getSalary())
                 .location(application.getLocation())
                 .notes(application.getNotes())
                 .createdAt(application.getCreatedAt())

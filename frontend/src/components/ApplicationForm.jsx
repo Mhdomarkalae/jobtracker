@@ -7,7 +7,7 @@ const defaultValues = {
   jobUrl: '',
   dateApplied: '',
   currentStatus: 'APPLIED',
-  salaryRange: '',
+  salary: '',
   location: '',
   notes: '',
 }
@@ -32,6 +32,13 @@ function validate(values) {
 
   if (!values.dateApplied) {
     nextErrors.dateApplied = 'Date applied is required.'
+  }
+
+  const salaryNum = Number(values.salary)
+  if (values.salary === '' || Number.isNaN(salaryNum)) {
+    nextErrors.salary = 'Salary is required (use a number, e.g. annual base pay).'
+  } else if (salaryNum < 0) {
+    nextErrors.salary = 'Salary cannot be negative.'
   }
 
   return nextErrors
@@ -84,7 +91,7 @@ function ApplicationForm({
         companyName: formValues.companyName.trim(),
         positionTitle: formValues.positionTitle.trim(),
         jobUrl: formValues.jobUrl.trim(),
-        salaryRange: formValues.salaryRange.trim(),
+        salary: Number(formValues.salary),
         location: formValues.location.trim(),
         notes: formValues.notes.trim(),
       })
@@ -184,17 +191,21 @@ function ApplicationForm({
         </div>
 
         <div>
-          <label className="field-label" htmlFor="salaryRange">
-            Salary Range
+          <label className="field-label" htmlFor="salary">
+            Salary (USD)
           </label>
           <input
-            id="salaryRange"
-            name="salaryRange"
+            id="salary"
+            name="salary"
+            type="number"
+            min="0"
+            step="0.01"
             className="field-input"
-            value={formValues.salaryRange}
+            value={formValues.salary}
             onChange={handleChange}
-            placeholder="120k-140k"
+            placeholder="95000"
           />
+          {errors.salary ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{errors.salary}</p> : null}
         </div>
 
         <div>

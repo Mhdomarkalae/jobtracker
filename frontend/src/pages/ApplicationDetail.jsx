@@ -15,7 +15,13 @@ import {
   updateApplicationStatus,
   updateInterview,
 } from '../services/api'
-import { formatDate, formatDateTime, formatInterviewTypeLabel, toDateInputValue } from '../utils/formatters'
+import {
+  formatDate,
+  formatDateTime,
+  formatInterviewTypeLabel,
+  formatSalary,
+  toDateInputValue,
+} from '../utils/formatters'
 import { APPLICATION_STATUS_OPTIONS } from '../utils/options'
 
 function ApplicationDetail() {
@@ -199,7 +205,7 @@ function ApplicationDetail() {
                 <StatusBadge status={application.currentStatus} />
                 <span>Applied {formatDate(application.dateApplied)}</span>
                 {application.location ? <span>{application.location}</span> : null}
-                {application.salaryRange ? <span>{application.salaryRange}</span> : null}
+                {application.salary != null ? <span>{formatSalary(application.salary)}</span> : null}
               </div>
             </div>
 
@@ -437,7 +443,7 @@ function ApplicationDetail() {
             jobUrl: application.jobUrl || '',
             dateApplied: toDateInputValue(application.dateApplied),
             currentStatus: application.currentStatus,
-            salaryRange: application.salaryRange || '',
+            salary: application.salary != null ? String(application.salary) : '',
             location: application.location || '',
             notes: application.notes || '',
           }}

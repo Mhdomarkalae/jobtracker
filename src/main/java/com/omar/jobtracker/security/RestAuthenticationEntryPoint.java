@@ -30,8 +30,8 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(
                 ErrorResponse.builder()
-                        .message("Authentication is required to access this resource.")
                         .timestamp(LocalDateTime.now())
+                        .message("Authentication is required to access this resource.")
                         .status(HttpStatus.UNAUTHORIZED.value())
                         .build()
         ));

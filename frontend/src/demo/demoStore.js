@@ -20,7 +20,7 @@ const seedState = {
       jobUrl: 'https://vercel.com/careers',
       dateApplied: '2026-03-25',
       currentStatus: 'INTERVIEW',
-      salaryRange: '$40/hr',
+      salary: 83200,
       location: 'Remote',
       notes: 'Resume project that recruiters can open without signing in.',
       createdAt: '2026-03-25T12:30:00',
@@ -59,7 +59,7 @@ const seedState = {
       jobUrl: 'https://notion.so/careers',
       dateApplied: '2026-03-20',
       currentStatus: 'SCREENING',
-      salaryRange: '$42/hr',
+      salary: 87360,
       location: 'San Francisco, CA',
       notes: 'Applied with referral from campus event.',
       createdAt: '2026-03-20T16:45:00',
@@ -81,7 +81,7 @@ const seedState = {
       jobUrl: 'https://figma.com/careers',
       dateApplied: '2026-03-12',
       currentStatus: 'OFFER',
-      salaryRange: '$45/hr',
+      salary: 93600,
       location: 'New York, NY',
       notes: 'Offer received after technical and behavioral rounds.',
       createdAt: '2026-03-12T11:20:00',
@@ -120,6 +120,26 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
+function migrateApplicationFromLegacy(application) {
+  if (application == null) {
+    return application
+  }
+  const next = { ...application }
+  delete next.salaryRange
+  if (next.salary != null && next.salary !== '') {
+    next.salary = Number(next.salary)
+    return next
+  }
+  if (application.salaryRange != null) {
+    const digits = String(application.salaryRange).replace(/[^0-9.]/g, '')
+    const parsed = parseFloat(digits)
+    next.salary = Number.isFinite(parsed) ? parsed : 0
+    return next
+  }
+  next.salary = 0
+  return next
+}
+
 function readState() {
   if (typeof window === 'undefined') {
     return clone(seedState)
@@ -134,7 +154,11 @@ function readState() {
     return initial
   }
 
-  return JSON.parse(raw)
+  const parsed = JSON.parse(raw)
+  if (Array.isArray(parsed.applications)) {
+    parsed.applications = parsed.applications.map(migrateApplicationFromLegacy)
+  }
+  return parsed
 }
 
 function writeState(state) {
@@ -173,7 +197,7 @@ function buildApplicationSummary(application) {
     jobUrl: normalized.jobUrl,
     dateApplied: normalized.dateApplied,
     currentStatus: normalized.currentStatus,
-    salaryRange: normalized.salaryRange,
+    salary: normalized.salary,
     location: normalized.location,
     notes: normalized.notes,
     createdAt: normalized.createdAt,
@@ -218,7 +242,7 @@ export function createDemoApplication(payload) {
     jobUrl: payload.jobUrl || null,
     dateApplied: payload.dateApplied,
     currentStatus: payload.currentStatus,
-    salaryRange: payload.salaryRange || null,
+    salary: payload.salary != null && payload.salary !== '' ? Number(payload.salary) : 0,
     location: payload.location || null,
     notes: payload.notes || null,
     createdAt: now,
@@ -245,7 +269,7 @@ export function updateDemoApplication(id, payload) {
   application.jobUrl = payload.jobUrl || null
   application.dateApplied = payload.dateApplied
   application.currentStatus = payload.currentStatus
-  application.salaryRange = payload.salaryRange || null
+  application.salary = payload.salary != null && payload.salary !== '' ? Number(payload.salary) : 0
   application.location = payload.location || null
   application.notes = payload.notes || null
   application.updatedAt = new Date().toISOString()

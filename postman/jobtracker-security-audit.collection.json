@@ -468,7 +468,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Postman Audit Co\",\n  \"positionTitle\": \"Security Intern\",\n  \"dateApplied\": \"2026-04-01\",\n  \"currentStatus\": \"APPLIED\",\n  \"salaryRange\": \"25/hr\",\n  \"location\": \"Remote\",\n  \"notes\": \"Created from Postman audit\"\n}"
+              "raw": "{\n  \"companyName\": \"Postman Audit Co\",\n  \"positionTitle\": \"Security Intern\",\n  \"dateApplied\": \"2026-04-01\",\n  \"currentStatus\": \"APPLIED\",\n  \"salary\": 25.00,\n  \"location\": \"Remote\",\n  \"notes\": \"Created from Postman audit\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/jobs",
@@ -868,7 +868,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Negative Salary Co\",\n  \"positionTitle\": \"Bad Data Intern\",\n  \"dateApplied\": \"2026-03-12\",\n  \"currentStatus\": \"APPLIED\",\n  \"salaryRange\": -100\n}"
+              "raw": "{\n  \"companyName\": \"Negative Salary Co\",\n  \"positionTitle\": \"Bad Data Intern\",\n  \"dateApplied\": \"2026-03-12\",\n  \"currentStatus\": \"APPLIED\",\n  \"salary\": -100\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/jobs",

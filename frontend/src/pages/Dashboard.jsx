@@ -32,10 +32,10 @@ function Dashboard() {
       setError('')
 
       try {
-        const [summaryData, timelineData, applicationsData] = await Promise.all([
+        const [summaryData, timelineData, applicationsPage] = await Promise.all([
           getAnalyticsSummary(),
           getAnalyticsTimeline('week'),
-          getApplications(),
+          getApplications(undefined, { page: 0, size: 100 }),
         ])
 
         if (!isMounted) {
@@ -49,7 +49,9 @@ function Dashboard() {
             count,
           })),
         )
-        setRecentApplications(sortApplicationsByDateApplied(applicationsData).slice(0, 5))
+        setRecentApplications(
+          sortApplicationsByDateApplied(applicationsPage.content ?? []).slice(0, 5),
+        )
       } catch (loadError) {
         if (isMounted) {
           setError(getApiErrorMessage(loadError, 'Unable to load dashboard metrics.'))

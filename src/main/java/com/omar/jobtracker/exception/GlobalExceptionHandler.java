@@ -2,6 +2,8 @@ package com.omar.jobtracker.exception;
 
 import com.omar.jobtracker.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -28,22 +32,27 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({
-            MethodArgumentNotValidException.class,
-            ConstraintViolationException.class,
-            IllegalArgumentException.class,
-            HttpMessageNotReadableException.class
-    })
-    public ErrorResponse handleBadRequest(Exception exception) {
-        if (exception instanceof MethodArgumentNotValidException validationException) {
-            String message = validationException.getBindingResult()
-                    .getFieldErrors()
-                    .stream()
-                    .map(this::formatFieldError)
-                    .collect(Collectors.joining("; "));
-            return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
-        }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
+        String message = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(this::formatFieldError)
+                .collect(Collectors.joining("; "));
+        return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
+    }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ErrorResponse handleHttpMessageNotReadable(HttpMessageNotReadableException ignored) {
+        return buildErrorResponse("Invalid request body", HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ConstraintViolationException.class, IllegalArgumentException.class})
+    public ErrorResponse handleConstraintAndIllegalArgument(Exception exception) {
         return buildErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -64,14 +73,22 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ErrorResponse handleUnhandled(Exception exception) {
+        log.error("Unhandled server error", exception);
+        return buildErrorResponse("Something went wrong. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private String formatFieldError(FieldError fieldError) {
         return fieldError.getField() + ": " + fieldError.getDefaultMessage();
     }
 
     private ErrorResponse buildErrorResponse(String message, HttpStatus status) {
         return ErrorResponse.builder()
-                .message(message)
                 .timestamp(LocalDateTime.now())
+                .message(message)
                 .status(status.value())
                 .build();
     }

@@ -38,3 +38,14 @@ export function sortApplicationsByDateApplied(applications) {
     return parseISO(right.dateApplied).getTime() - parseISO(left.dateApplied).getTime()
   })
 }
+
+export function formatSalary(value) {
+  if (value == null) {
+    return ''
+  }
+  const amount = Number(value)
+  if (Number.isNaN(amount)) {
+    return String(value)
+  }
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(amount)
+}

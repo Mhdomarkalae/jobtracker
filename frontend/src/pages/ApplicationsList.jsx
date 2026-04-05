@@ -21,9 +21,12 @@ function ApplicationsList() {
       setError('')
 
       try {
-        const data = await getApplications(selectedStatus === 'ALL' ? undefined : selectedStatus)
+        const page = await getApplications(selectedStatus === 'ALL' ? undefined : selectedStatus, {
+          page: 0,
+          size: 100,
+        })
         if (isMounted) {
-          setApplications(sortApplicationsByDateApplied(data))
+          setApplications(sortApplicationsByDateApplied(page.content ?? []))
         }
       } catch (loadError) {
         if (isMounted) {
