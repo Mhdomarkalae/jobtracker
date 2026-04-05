@@ -2,6 +2,8 @@
 
 Full-stack job application tracker with a Spring Boot API, PostgreSQL persistence, JWT authentication, and a React/Vite frontend.
 
+For a guided code map, see [`CODE_WALKTHROUGH.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/CODE_WALKTHROUGH.md).
+
 ## What changed
 
 - Added persistent user accounts with a `users` table and BCrypt password hashing.
@@ -127,6 +129,8 @@ Additional notes are in [`supabase/schema-notes.md`](/Users/mhdomarkalae/IdeaPro
 4. Include your frontend URL in `APP_ALLOWED_ORIGIN_PATTERNS`.
 
 If you prefer Railway or another Java host, the same env vars apply.
+
+For the safest resume-friendly free deployment path, use [`DEPLOY_FREE.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/DEPLOY_FREE.md).
 
 ## Verification
 

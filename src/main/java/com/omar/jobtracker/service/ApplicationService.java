@@ -33,6 +33,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Core business logic for job applications.
+ *
+ * <p>This service is where the app's domain rules live:
+ * every query is scoped to the authenticated user, status changes create
+ * history entries, and analytics are derived from only that user's jobs.</p>
+ */
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
@@ -40,6 +47,7 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse createApplication(ApplicationRequest request) {
+        // New applications are always attached to the currently logged-in user.
         Application application = Application.builder()
                 .companyName(request.getCompanyName())
                 .positionTitle(request.getPositionTitle())
@@ -59,6 +67,8 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public List<ApplicationSummaryResponse> getApplications(ApplicationStatus status) {
         Long userId = currentUserService.getCurrentUserId();
+        // Repositories expose user-scoped methods so a user can never "forget"
+        // to filter by ownership in calling code.
         List<Application> applications = status == null
                 ? applicationRepository.findByUserId(userId)
                 : applicationRepository.findByUserIdAndCurrentStatus(userId, status);
@@ -92,6 +102,8 @@ public class ApplicationService {
         application.setNotes(request.getNotes());
 
         if (previousStatus != request.getCurrentStatus()) {
+            // Full updates can still change status, so we keep history in sync
+            // even outside the dedicated PATCH endpoint.
             application.addStatusHistory(buildStatusHistory(request.getCurrentStatus(), null));
         }
 
@@ -110,6 +122,8 @@ public class ApplicationService {
         Application application = findApplicationOrThrow(id);
 
         if (application.getCurrentStatus() != request.getStatus()) {
+            // This is the dedicated "advance the application" flow used by the
+            // detail page. It updates the current status and records when it changed.
             application.setCurrentStatus(request.getStatus());
             application.addStatusHistory(buildStatusHistory(request.getStatus(), request.getNotes()));
         }
@@ -202,11 +216,14 @@ public class ApplicationService {
     }
 
     private Application findApplicationOrThrow(Long id) {
+        // Ownership is enforced here so every caller gets the same protection.
         return applicationRepository.findByIdAndUserId(id, currentUserService.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found with id " + id));
     }
 
     private void initializeApplicationDetails(Application application) {
+        // open-in-view is disabled, so child collections are initialized while
+        // the transaction is still active.
         application.getStatusHistory().size();
         application.getInterviews().size();
     }

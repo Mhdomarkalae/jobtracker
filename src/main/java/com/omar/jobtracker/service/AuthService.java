@@ -19,6 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Handles account creation and login.
+ *
+ * <p>The service is intentionally small: it normalizes emails, hashes
+ * passwords, authenticates credentials through Spring Security, and then
+ * returns the frontend everything it needs to start a session: a JWT plus
+ * the basic user profile.</p>
+ */
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -29,6 +37,8 @@ public class AuthService {
 
     @Transactional
     public AuthResponse signup(SignupRequest request) {
+        // Normalize emails once so the rest of the system treats different
+        // casing as the same account.
         String normalizedEmail = request.getEmail().trim().toLowerCase();
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new EmailAlreadyInUseException("An account already exists for " + normalizedEmail);
@@ -46,6 +56,8 @@ public class AuthService {
     public AuthResponse login(AuthRequest request) {
         String normalizedEmail = request.getEmail().trim().toLowerCase();
         try {
+            // AuthenticationManager delegates to our configured provider,
+            // which compares the submitted password to the stored hash.
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(normalizedEmail, request.getPassword())
             );
@@ -65,6 +77,8 @@ public class AuthService {
     }
 
     private AuthResponse buildAuthResponse(User user) {
+        // The token becomes the frontend's session credential for all
+        // later API requests.
         AuthenticatedUser authenticatedUser = new AuthenticatedUser(user.getId(), user.getEmail(), user.getPasswordHash());
         return AuthResponse.builder()
                 .token(jwtService.generateToken(authenticatedUser))

@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, getAuthErrorMessage } = useAuth()
+  const { canUseDemoFallback, continueWithDemo, login, getAuthErrorMessage } = useAuth()
   const [formValues, setFormValues] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
@@ -73,6 +73,11 @@ function Login() {
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
             Sign in to manage your own pipeline, interviews, status history, and analytics across devices.
           </p>
+          {canUseDemoFallback ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50/80 p-5 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+              Prefer to look around first? Use guest demo mode to explore the full UI with sample applications before signing up.
+            </div>
+          ) : null}
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <div className="panel-muted p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Private jobs</p>
@@ -140,6 +145,19 @@ function Login() {
             <button type="submit" className="button-primary w-full justify-center" disabled={isSubmitting}>
               {isSubmitting ? 'Logging in...' : 'Log in'}
             </button>
+
+            {canUseDemoFallback ? (
+              <button
+                type="button"
+                className="button-secondary w-full justify-center"
+                onClick={() => {
+                  continueWithDemo()
+                  navigate('/', { replace: true })
+                }}
+              >
+                Continue as Guest
+              </button>
+            ) : null}
           </form>
         </section>
       </div>

@@ -24,6 +24,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+/**
+ * Central Spring Security configuration.
+ *
+ * <p>This project uses stateless JWT authentication, so requests are either:
+ * public utility endpoints such as health and signup/login, or authenticated
+ * API calls that must carry a bearer token. The JWT filter runs before the
+ * normal username/password filter and populates the security context from
+ * the token.</p>
+ */
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -33,12 +42,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // The API is consumed by a separate React app, so sessions and CSRF
+        // cookies are intentionally disabled in favor of bearer tokens.
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Browser preflight requests must pass before auth.
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Health stays public so Render can probe the service.
+                        .requestMatchers("/api/health").permitAll()
+                        // Auth endpoints are the only public write endpoints.
                         .requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
@@ -55,6 +70,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
+        // DaoAuthenticationProvider handles email + password login by asking
+        // our custom user-details service for the stored password hash.
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());

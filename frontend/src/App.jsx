@@ -25,12 +25,25 @@ function getInitialTheme() {
 }
 
 function AppLayout({ theme, onToggleTheme }) {
-  const { logout, user } = useAuth()
+  const { isDemoMode, logout, user } = useAuth()
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-100">
       <div className="pointer-events-none fixed inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.16),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
-      <Navbar theme={theme} onToggleTheme={onToggleTheme} user={user} onLogout={logout} />
+      <Navbar
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        user={user}
+        onLogout={logout}
+        isDemoMode={isDemoMode}
+      />
+      {isDemoMode ? (
+        <div className="border-b border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-800 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+          <div className="mx-auto max-w-7xl">
+            Guest demo mode is active. You are exploring local sample data, so anyone can try the app without creating an account.
+          </div>
+        </div>
+      ) : null}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Outlet />
       </main>

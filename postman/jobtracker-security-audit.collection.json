@@ -1,0 +1,1466 @@
+{
+  "info": {
+    "name": "JobTracker Security Audit",
+    "_postman_id": "c2a3575c-8f89-44e3-9c34-4f76a9e4d13a",
+    "description": "Security and functionality audit requests for the JobTracker backend. Import together with the matching environment file.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const requestName = pm.info.requestName;",
+          "const tokenVar = pm.variables.get('token_var');",
+          "if (tokenVar) {",
+          "  const token = pm.environment.get(tokenVar);",
+          "  if (token) {",
+          "    pm.environment.set('active_token', token);",
+          "  }",
+          "}",
+          "",
+          "if (requestName === 'Signup User A') {",
+          "  const stamp = Date.now();",
+          "  pm.environment.set('audit_stamp', String(stamp));",
+          "  pm.environment.set('user_a_email', `postman.usera.${stamp}@example.com`);",
+          "  pm.environment.set('user_b_email', `postman.userb.${stamp}@example.com`);",
+          "}",
+          "",
+          "if (!pm.environment.get('user_a_password')) {",
+          "  pm.environment.set('user_a_password', 'password123');",
+          "}",
+          "if (!pm.environment.get('user_b_password')) {",
+          "  pm.environment.set('user_b_password', 'password123');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token_var",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Health is public', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Health response shape is valid', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('status', 'ok');",
+                  "  pm.expect(json).to.have.property('application');",
+                  "  pm.expect(json).to.have.property('timestamp');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Signup User A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Signup User A returns 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Signup User A response does not expose password hash', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('token');",
+                  "  pm.expect(json).to.have.property('user');",
+                  "  pm.expect(json.user).to.not.have.property('password');",
+                  "  pm.expect(json.user).to.not.have.property('passwordHash');",
+                  "  pm.environment.set('user_a_token', json.token);",
+                  "  pm.environment.set('user_a_id', String(json.user.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_a_email}}\",\n  \"password\": \"{{user_a_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login User A returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Login User A returns token and safe user payload', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('token');",
+                  "  pm.expect(json.user.email).to.eql(pm.environment.get('user_a_email'));",
+                  "  pm.expect(json.user).to.not.have.property('passwordHash');",
+                  "  pm.environment.set('user_a_token', json.token);",
+                  "  pm.environment.set('user_a_id', String(json.user.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_a_email}}\",\n  \"password\": \"{{user_a_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Signup User B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Signup User B returns 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Signup User B response is safe', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('token');",
+                  "  pm.expect(json.user).to.not.have.property('passwordHash');",
+                  "  pm.environment.set('user_b_token', json.token);",
+                  "  pm.environment.set('user_b_id', String(json.user.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_b_email}}\",\n  \"password\": \"{{user_b_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login User B returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Login User B stores token', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.user.email).to.eql(pm.environment.get('user_b_email'));",
+                  "  pm.environment.set('user_b_token', json.token);",
+                  "  pm.environment.set('user_b_id', String(json.user.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_b_email}}\",\n  \"password\": \"{{user_b_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Auth Me Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Auth Me without token returns 401', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('401 uses consistent error shape', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('timestamp');",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json).to.have.property('status', 401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid Signup Validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Invalid signup returns 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Validation error uses consistent shape', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('timestamp');",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json).to.have.property('status', 400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bad-email\",\n  \"password\": \"short\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authz & BOLA",
+      "item": [
+        {
+          "name": "Get Jobs Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Protected jobs list requires auth', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Jobs Invalid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Invalid token returns 401', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid.token.value"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Job User A",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('User A can create a job', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Created job shape is valid and owned by caller context', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('id');",
+                  "  pm.expect(json).to.have.property('companyName', 'Postman Audit Co');",
+                  "  pm.expect(json).to.have.property('positionTitle', 'Security Intern');",
+                  "  pm.expect(json).to.have.property('currentStatus', 'APPLIED');",
+                  "  pm.environment.set('user_a_job_id', String(json.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Postman Audit Co\",\n  \"positionTitle\": \"Security Intern\",\n  \"dateApplied\": \"2026-04-01\",\n  \"currentStatus\": \"APPLIED\",\n  \"salaryRange\": \"25/hr\",\n  \"location\": \"Remote\",\n  \"notes\": \"Created from Postman audit\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Interview User A",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('User A can create an interview', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Interview response shape is valid', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('id');",
+                  "  pm.expect(json).to.have.property('applicationId');",
+                  "  pm.environment.set('user_a_interview_id', String(json.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interviewType\": \"TECHNICAL\",\n  \"scheduledDate\": \"2026-04-12T10:00:00\",\n  \"interviewerName\": \"Postman Reviewer\",\n  \"notes\": \"Ownership audit interview\",\n  \"durationMinutes\": 60,\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}/interviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}",
+                "interviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "User B Cannot Read User A Job",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('BOLA read is blocked', function () {",
+                  "  pm.expect([403, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "User B Cannot Update User A Job",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('BOLA update is blocked', function () {",
+                  "  pm.expect([403, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Owned?\",\n  \"positionTitle\": \"Nope\",\n  \"dateApplied\": \"2026-04-01\",\n  \"currentStatus\": \"APPLIED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "User B Cannot Delete User A Job",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('BOLA delete is blocked', function () {",
+                  "  pm.expect([403, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "User B Cannot Update User A Interview",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Interview BOLA update is blocked', function () {",
+                  "  pm.expect([403, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interviewType\": \"FINAL\",\n  \"scheduledDate\": \"2026-04-13T10:00:00\",\n  \"completed\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interviews/{{user_a_interview_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interviews",
+                "{{user_a_interview_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validation & Injection",
+      "item": [
+        {
+          "name": "Invalid Enum Status Patch",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Invalid enum returns 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Invalid enum uses error shape', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql(400);",
+                  "  pm.expect(json.message).to.include('Enum');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"HACKED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid Date Create",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Malformed date returns 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Malformed date does not expose stack trace', function () {",
+                  "  const text = pm.response.text();",
+                  "  pm.expect(text).to.not.include('java.lang');",
+                  "  pm.expect(text).to.not.include('at com.omar');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Bad Date Co\",\n  \"positionTitle\": \"Date Intern\",\n  \"dateApplied\": \"not-a-date\",\n  \"currentStatus\": \"APPLIED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Negative Salary Rejected",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Negative salary should be rejected', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Negative Salary Co\",\n  \"positionTitle\": \"Bad Data Intern\",\n  \"dateApplied\": \"2026-03-12\",\n  \"currentStatus\": \"APPLIED\",\n  \"salaryRange\": -100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Negative Interview Duration Rejected",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Negative interview duration returns 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interviewType\": \"TECHNICAL\",\n  \"scheduledDate\": \"2026-04-12T10:00:00\",\n  \"durationMinutes\": -30\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}/interviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}",
+                "interviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mass Assignment Attempt",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mass assignment attempt does not take caller-supplied id', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.not.eql(99999);",
+                  "  pm.environment.set('mass_assign_job_id', String(json.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 99999,\n  \"companyName\": \"MassAssign Co\",\n  \"positionTitle\": \"Security Intern\",\n  \"dateApplied\": \"2026-03-15\",\n  \"currentStatus\": \"APPLIED\",\n  \"user\": { \"id\": 123456 },\n  \"createdAt\": \"1999-01-01T00:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "User B Cannot Read Mass Assigned Job",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mass assignment did not transfer ownership', function () {",
+                  "  pm.expect([403, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{mass_assign_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{mass_assign_job_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SQL Injection Payload Stored Literally",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('SQLi payload request succeeds as data, not as injection', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('SQLi payload is stored literally', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.companyName).to.eql(\"test' OR 1=1 --\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"test' OR 1=1 --\",\n  \"positionTitle\": \"Injection Intern\",\n  \"dateApplied\": \"2026-03-14\",\n  \"currentStatus\": \"APPLIED\",\n  \"notes\": \"sqli payload\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "XSS Payload Stored",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('XSS payload request succeeds', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('XSS payload is echoed back as stored text', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.companyName).to.eql('<script>alert(1)</script>');",
+                  "  pm.expect(json.notes).to.eql('<script>alert(2)</script>');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"<script>alert(1)</script>\",\n  \"positionTitle\": \"XSS Intern\",\n  \"dateApplied\": \"2026-03-13\",\n  \"currentStatus\": \"APPLIED\",\n  \"notes\": \"<script>alert(2)</script>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Functionality",
+      "item": [
+        {
+          "name": "Get Jobs User A",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('User A can list jobs', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Jobs list returns array', function () {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Jobs User B Empty",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_b_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Fresh User B job list is empty', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json()).to.be.an('array').with.lengthOf(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pagination Probe Should Limit To One",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pagination request returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Pagination should limit results to size=1', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.length).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?page=0&size=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Analytics Summary User A",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Analytics summary returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Summary shape is valid', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('totalApplications');",
+                  "  pm.expect(json).to.have.property('applicationsByStatus');",
+                  "  pm.expect(json).to.have.property('responseRate');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "analytics",
+                "summary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Analytics Timeline Invalid Group",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Invalid timeline group returns 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Invalid timeline group uses consistent error shape', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('status', 400);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json).to.have.property('timestamp');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/timeline?groupBy=year",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "analytics",
+                "timeline"
+              ],
+              "query": [
+                {
+                  "key": "groupBy",
+                  "value": "year"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Job User A",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Delete job returns 204', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deleted Job Returns 404",
+          "variable": [
+            {
+              "key": "token_var",
+              "value": "user_a_token"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Deleted job is no longer accessible', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{active_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{user_a_job_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{user_a_job_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

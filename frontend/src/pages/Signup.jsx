@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 
 function Signup() {
   const navigate = useNavigate()
-  const { signup, getAuthErrorMessage } = useAuth()
+  const { canUseDemoFallback, continueWithDemo, signup, getAuthErrorMessage } = useAuth()
   const [formValues, setFormValues] = useState({ email: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
@@ -76,6 +76,11 @@ function Signup() {
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
             Your jobs, interviews, analytics, and status history stay tied to your own login and database records.
           </p>
+          {canUseDemoFallback ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50/80 p-5 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+              Not ready to create an account yet? Open the guest demo and explore the project first.
+            </div>
+          ) : null}
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             {submitError ? (
@@ -137,6 +142,19 @@ function Signup() {
             <button type="submit" className="button-primary w-full justify-center" disabled={isSubmitting}>
               {isSubmitting ? 'Creating account...' : 'Create account'}
             </button>
+
+            {canUseDemoFallback ? (
+              <button
+                type="button"
+                className="button-secondary w-full justify-center"
+                onClick={() => {
+                  continueWithDemo()
+                  navigate('/', { replace: true })
+                }}
+              >
+                Continue as Guest
+              </button>
+            ) : null}
           </form>
         </section>
 
