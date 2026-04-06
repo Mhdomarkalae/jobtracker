@@ -62,7 +62,6 @@ public class Application {
     private String jobUrl;
 
     @NotNull
-    @NotFutureDate
     @Column(nullable = false)
     private LocalDate dateApplied;
 
