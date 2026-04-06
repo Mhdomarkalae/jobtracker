@@ -113,14 +113,6 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    if (isDemoMode) {
-      // Logging out of the demo keeps the demo active so recruiters do not
-      // land on a dead-end auth page when the backend is sleeping.
-      enableDemoSession()
-      setUser(getDemoUser())
-      return
-    }
-
     clearStoredAuthToken()
     disableDemoSession()
     setUser(null)
