@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Full-stack job application tracker with a Spring Boot API, PostgreSQL persistence, JWT authentication, and a React/Vite frontend.",
   "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=.env.local node server.js",
+    "start": "DOTENV_CONFIG_PATH=.env.local node server.js",
     "prisma:validate": "dotenv -e .env.local -o -- prisma validate",
     "prisma:pull": "dotenv -e .env.local -o -- prisma db pull",
     "prisma:generate": "dotenv -e .env.local -o -- prisma generate",
@@ -30,6 +32,8 @@
     "prisma": "^5.22.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
   }
 }
