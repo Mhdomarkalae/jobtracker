@@ -1,155 +1,160 @@
 # Job Tracker
 
-Full-stack job application tracker with a Spring Boot API, PostgreSQL persistence, JWT authentication, and a React/Vite frontend.
+Full-stack job application tracker with a **Node.js/Express API, Prisma ORM, Supabase PostgreSQL**, and a **React/Vite frontend**.
 
 For a guided code map, see [`CODE_WALKTHROUGH.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/CODE_WALKTHROUGH.md).
 
-## What changed
-
-- Added persistent user accounts with a `users` table and BCrypt password hashing.
-- Added JWT auth endpoints: `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/auth/me`.
-- Protected all job/application, interview, and analytics endpoints so each user only sees their own data.
-- Exposed authenticated `/api/jobs` CRUD routes while keeping the richer application-tracking domain already in the project.
-- Updated the React frontend with login/signup, protected routes, token-aware Axios calls, loading states, and error handling.
-- Added deployment-ready env templates plus frontend Vercel and backend Render config.
-
 ## Stack
 
-- Backend: Spring Boot 3, Spring Data JPA, Spring Security, PostgreSQL, JWT, Maven
-- Frontend: React 18, Vite, Tailwind CSS, React Router, Axios, date-fns, Recharts
-- Local database: Docker Compose PostgreSQL
-- Hosted database option: Supabase Postgres via JDBC
+- **Backend**: Node.js, Express.js, Prisma ORM, Supabase PostgreSQL
+- **Frontend**: React 18, Vite, Tailwind CSS, React Router, Axios
+- **Database**: Supabase (managed PostgreSQL with connection pooling)
+- **Infrastructure**: Environment-based configuration with `.env.local`
 
-## API
+## Quick Start
 
-### Auth
+### Prerequisites
+- Node.js 20+
+- Supabase account and project (see [Supabase Setup](#supabase-setup))
 
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
-- `GET /api/auth/me`
-
-### Jobs
-
-- `GET /api/jobs`
-- `POST /api/jobs`
-- `GET /api/jobs/{id}`
-- `PUT /api/jobs/{id}`
-- `DELETE /api/jobs/{id}`
-- `PATCH /api/jobs/{id}/status`
-
-### Interviews and analytics
-
-- `GET /api/jobs/{id}/interviews`
-- `POST /api/jobs/{id}/interviews`
-- `PUT /api/interviews/{id}`
-- `DELETE /api/interviews/{id}`
-- `GET /api/analytics/summary`
-- `GET /api/analytics/timeline`
-
-## Local setup
-
-### 1. Start PostgreSQL
+### 1. Install Dependencies
 
 ```bash
-docker compose up -d
-```
-
-### 2. Run the backend
-
-```bash
-./mvnw spring-boot:run
-```
-
-The API defaults to `http://localhost:8080/api`.
-
-### 3. Run the frontend
-
-```bash
-cd frontend
 npm install
+cd frontend && npm install && cd ..
+```
+
+### 2. Set Up Environment
+
+Copy `.env.local.example` to `.env.local` and add your Supabase credentials:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local`:
+```env
+DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+DIRECT_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+```
+
+### 3. Run Database Migrations
+
+```bash
+npm run prisma:migrate:dev -- --name init
+```
+
+### 4. Start the API Server
+
+```bash
 npm run dev
 ```
 
-If you are using the local Node runtime that was set up in this workspace:
+API runs at `http://localhost:3000/api`
+
+### 5. Start the Frontend (in another terminal)
 
 ```bash
 cd frontend
-PATH="/Users/mhdomarkalae/IdeaProjects/jobtracker/.tools/node-v20.19.0-darwin-arm64/bin:$PATH" npm run dev
+npm run dev
 ```
 
-The frontend expects `VITE_API_BASE_URL=http://localhost:8080/api` by default.
+Frontend runs at `http://localhost:5173`
 
-## Environment variables
+## API Documentation
 
-Backend values are documented in [`.env.example`](/Users/mhdomarkalae/IdeaProjects/jobtracker/.env.example).
+See [`API.md`](./API.md) for full endpoint documentation.
 
-Required backend variables:
+### Key Endpoints
 
-- `DATABASE_URL`
-- `DATABASE_USERNAME`
-- `DATABASE_PASSWORD`
-- `JWT_SECRET`
-- `JWT_EXPIRATION_MS`
-- `APP_ALLOWED_ORIGIN_PATTERNS`
+**Health**
+- `GET /api/health` - Health check
 
-Frontend values are documented in [`frontend/.env.example`](/Users/mhdomarkalae/IdeaProjects/jobtracker/frontend/.env.example).
+**Users**
+- `GET /api/users` - Get all users
+- `POST /api/users` - Create user
+- `GET /api/users/:id` - Get user by ID
 
-Required frontend variable:
+**Jobs**
+- `GET /api/jobs` - Get all jobs
+- `POST /api/jobs` - Create job
+- `GET /api/jobs/:id` - Get job by ID
+- `PATCH /api/jobs/:id` - Update job
+- `DELETE /api/jobs/:id` - Delete job
+- `GET /api/users/:userId/jobs` - Get jobs for user
 
-- `VITE_API_BASE_URL`
+**Stats**
+- `GET /api/stats` - Get job statistics
 
-## Supabase setup
+## Supabase Setup
 
-This project uses Supabase as managed Postgres, not as the auth provider.
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Get your Direct Connection string:
+   - Go to Settings → Database → Connection String
+   - Choose "URI" format
+   - Copy the connection string
 
-1. Create a Supabase project.
-2. Copy the Postgres connection details.
-3. Set:
-   - `DATABASE_URL=jdbc:postgresql://db.<project-ref>.supabase.co:5432/postgres?sslmode=require`
-   - `DATABASE_USERNAME=<supabase-user>`
-   - `DATABASE_PASSWORD=<supabase-password>`
-4. Set a strong `JWT_SECRET`.
-5. Set `APP_ALLOWED_ORIGIN_PATTERNS` to include your Vercel domain.
+3. Add to `.env.local`:
+```env
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+```
 
-Additional notes are in [`supabase/schema-notes.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/supabase/schema-notes.md).
+4. Run migrations:
+```bash
+npm run prisma:migrate:dev
+```
 
-## Deployment
+## NPM Scripts
 
-### Frontend on Vercel
+```bash
+# API
+npm run dev                 # Start Express server on :3000
+npm start                   # Production start
 
-1. Import the `frontend` directory as the Vercel project root.
-2. Set `VITE_API_BASE_URL` to your deployed backend URL, for example `https://your-api.onrender.com/api`.
-3. Vercel routing for the SPA is already configured in [`frontend/vercel.json`](/Users/mhdomarkalae/IdeaProjects/jobtracker/frontend/vercel.json).
+# Database
+npm run prisma:validate     # Validate schema
+npm run prisma:pull         # Introspect from database
+npm run prisma:generate     # Generate Prisma Client
+npm run prisma:migrate:dev  # Create and run migrations
+npm run prisma:studio       # Open Prisma Studio GUI
+npm run test:db             # Test database connectivity
+```
 
-### Backend on Render
+## Project Structure
 
-1. Create a new Render web service from this repo.
-2. Use [`render.yaml`](/Users/mhdomarkalae/IdeaProjects/jobtracker/render.yaml) or copy its settings manually.
-3. Set the database and JWT environment variables.
-4. Include your frontend URL in `APP_ALLOWED_ORIGIN_PATTERNS`.
+```
+jobtracker/
+├── server.js                    # Express.js main server
+├── prisma/
+│   ├── schema.prisma           # Database schema
+│   └── migrations/             # Database migrations
+├── test-db.js                   # Database connectivity test
+├── package.json                 # Node.js dependencies
+├── .env.local                   # Local environment (git-ignored)
+├── .env.local.example           # Template for .env.local
+├── API.md                       # API documentation
+├── frontend/                    # React/Vite application
+│   ├── src/
+│   │   └── services/api.js     # Axios API client
+│   ├── package.json
+│   └── .env.example
+└── src/                         # Spring Boot backend (legacy)
+```
 
-If you prefer Railway or another Java host, the same env vars apply.
+## Testing
 
-For the safest resume-friendly free deployment path, use [`DEPLOY_FREE.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/DEPLOY_FREE.md).
+Test the database connection:
+```bash
+npm run test:db
+```
 
-## Verification
-
-Verified locally with:
-
-- `./mvnw test`
-- `npm run build`
-- `npm run lint`
-
-Live API verification was also run against the updated backend:
-
-- signup and login succeeded
-- authenticated `/api/jobs` create/list/update succeeded
-- status changes created history automatically
-- interview creation succeeded
-- analytics summary returned user-scoped data
-- a second user saw an empty job list, confirming isolation
+This creates a test user and job, verifies CRUD operations, and confirms Supabase connectivity.
 
 ## Notes
 
-- Existing rows created before auth was added may have `user_id = null` in the local database.
-- Those legacy rows will not appear for logged-in users until you assign them to a user manually.
+- The Node.js/Express backend replaces the Spring Boot backend for Supabase integration
+- Spring Boot backend is still available but has connection issues with Supabase (see `src/` directory)
+- Frontend works with demo fallback if backend is unavailable
+- All API responses are JSON
+- Status enum values: `APPLIED`, `INTERVIEWING`, `OFFER`, `REJECTED`
