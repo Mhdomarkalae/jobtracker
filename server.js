@@ -2,6 +2,8 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
+const { signup, login, getUserById } = require("./auth");
+const { authMiddleware } = require("./middleware");
 
 const app = express();
 const prisma = new PrismaClient();
@@ -15,13 +17,66 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
+// ==================== AUTH ====================
+
+// Signup
+app.post("/api/auth/signup", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
+
+    const result = await signup(email, password);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Login
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    const result = await login(email, password);
+    res.json(result);
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
+});
+
+// Get current user
+app.get("/api/auth/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await getUserById(req.user.id);
+    res.json(user);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 // ==================== USERS ====================
 
-// Get all users
-app.get("/api/users", async (req, res) => {
+// Get all users (protected)
+app.get("/api/users", authMiddleware, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      include: { jobs: true },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        jobs: true,
+      },
     });
     res.json(users);
   } catch (error) {
@@ -29,8 +84,8 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// Get user by ID
-app.get("/api/users/:id", async (req, res) => {
+// Get user by ID (protected)
+app.get("/api/users/:id", authMiddleware, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: parseInt(req.params.id) },
@@ -43,30 +98,13 @@ app.get("/api/users/:id", async (req, res) => {
   }
 });
 
-// Create user
-app.post("/api/users", async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "Email required" });
-
-    const user = await prisma.user.create({
-      data: { email },
-    });
-    res.status(201).json(user);
-  } catch (error) {
-    if (error.code === "P2002") {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // ==================== JOBS ====================
 
-// Get all jobs
-app.get("/api/jobs", async (req, res) => {
+// Get all jobs for current user (protected)
+app.get("/api/jobs", authMiddleware, async (req, res) => {
   try {
     const jobs = await prisma.job.findMany({
+      where: { userId: req.user.id },
       include: { user: true },
       orderBy: { createdAt: "desc" },
     });
@@ -76,9 +114,14 @@ app.get("/api/jobs", async (req, res) => {
   }
 });
 
-// Get jobs by user
-app.get("/api/users/:userId/jobs", async (req, res) => {
+// Get jobs by user (protected)
+app.get("/api/users/:userId/jobs", authMiddleware, async (req, res) => {
   try {
+    // Only allow users to see their own jobs
+    if (parseInt(req.params.userId) !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     const jobs = await prisma.job.findMany({
       where: { userId: parseInt(req.params.userId) },
       orderBy: { createdAt: "desc" },
@@ -89,28 +132,34 @@ app.get("/api/users/:userId/jobs", async (req, res) => {
   }
 });
 
-// Get job by ID
-app.get("/api/jobs/:id", async (req, res) => {
+// Get job by ID (protected)
+app.get("/api/jobs/:id", authMiddleware, async (req, res) => {
   try {
     const job = await prisma.job.findUnique({
       where: { id: parseInt(req.params.id) },
       include: { user: true },
     });
     if (!job) return res.status(404).json({ error: "Job not found" });
+
+    // Only allow users to see their own jobs
+    if (job.userId !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Create job
-app.post("/api/jobs", async (req, res) => {
+// Create job (protected)
+app.post("/api/jobs", authMiddleware, async (req, res) => {
   try {
-    const { company, position, status, salary, location, notes, userId } = req.body;
+    const { company, position, status, salary, location, notes } = req.body;
 
-    if (!company || !position || !location || !userId) {
+    if (!company || !position || !location) {
       return res.status(400).json({
-        error: "company, position, location, and userId are required",
+        error: "company, position, and location are required",
       });
     }
 
@@ -122,25 +171,33 @@ app.post("/api/jobs", async (req, res) => {
         salary,
         location,
         notes,
-        userId: parseInt(userId),
+        userId: req.user.id,
       },
       include: { user: true },
     });
     res.status(201).json(job);
   } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(400).json({ error: "User not found" });
-    }
     res.status(500).json({ error: error.message });
   }
 });
 
-// Update job
-app.patch("/api/jobs/:id", async (req, res) => {
+// Update job (protected)
+app.patch("/api/jobs/:id", authMiddleware, async (req, res) => {
   try {
+    const job = await prisma.job.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+
+    if (!job) return res.status(404).json({ error: "Job not found" });
+
+    // Only allow users to update their own jobs
+    if (job.userId !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     const { company, position, status, salary, location, notes } = req.body;
 
-    const job = await prisma.job.update({
+    const updatedJob = await prisma.job.update({
       where: { id: parseInt(req.params.id) },
       data: {
         ...(company && { company }),
@@ -152,38 +209,47 @@ app.patch("/api/jobs/:id", async (req, res) => {
       },
       include: { user: true },
     });
-    res.json(job);
+    res.json(updatedJob);
   } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(404).json({ error: "Job not found" });
-    }
     res.status(500).json({ error: error.message });
   }
 });
 
-// Delete job
-app.delete("/api/jobs/:id", async (req, res) => {
+// Delete job (protected)
+app.delete("/api/jobs/:id", authMiddleware, async (req, res) => {
   try {
+    const job = await prisma.job.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+
+    if (!job) return res.status(404).json({ error: "Job not found" });
+
+    // Only allow users to delete their own jobs
+    if (job.userId !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     await prisma.job.delete({
       where: { id: parseInt(req.params.id) },
     });
     res.status(204).send();
   } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(404).json({ error: "Job not found" });
-    }
     res.status(500).json({ error: error.message });
   }
 });
 
 // ==================== STATS ====================
 
-// Get job stats
-app.get("/api/stats", async (req, res) => {
+// Get job stats for current user (protected)
+app.get("/api/stats", authMiddleware, async (req, res) => {
   try {
-    const total = await prisma.job.count();
+    const total = await prisma.job.count({
+      where: { userId: req.user.id },
+    });
+
     const byStatus = await prisma.job.groupBy({
       by: ["status"],
+      where: { userId: req.user.id },
       _count: true,
     });
 
