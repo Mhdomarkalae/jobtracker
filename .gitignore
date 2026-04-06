@@ -7,7 +7,7 @@ target/
 ### STS ###
 .apt_generated
 .classpath
-.factorypath
+.factoryclass
 .project
 .settings
 .springBeans
@@ -42,11 +42,17 @@ frontend/dist/
 ### Local tools ###
 .tools/
 
-### Environment ###
+### Environment - NEVER COMMIT SENSITIVE FILES ###
 .env
-.env.*
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
 !.env.example
-!.env
+!.env.local.example
 !frontend/.env.example
 
+### Prisma ###
 /src/generated/prisma
+prisma/.env
