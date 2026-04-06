@@ -17,15 +17,14 @@ import {
 
 // Browser-side API client.
 //
-// In normal mode it talks to the Spring Boot backend.
-// In demo mode it swaps to a localStorage-backed in-browser store so the
-// UI still works when the free backend is sleeping or not deployed yet.
+// Connects to Node.js/Express backend with Prisma/Supabase
+// In demo mode it swaps to a localStorage-backed in-browser store
 const AUTH_TOKEN_STORAGE_KEY = 'job-tracker-auth-token'
 const DEMO_MODE_STORAGE_KEY = 'job-tracker-demo-mode'
 const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_FALLBACK !== 'false'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -282,7 +281,7 @@ export async function updateApplicationStatus(id, status, notes) {
   }
 
   try {
-    const { data } = await api.patch(`/jobs/${id}/status`, payload)
+    const { data } = await api.patch(`/jobs/${id}`, payload)
     return data
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
