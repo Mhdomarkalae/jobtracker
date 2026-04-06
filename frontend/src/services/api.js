@@ -17,14 +17,14 @@ import {
 
 // Browser-side API client.
 //
-// Connects to Node.js/Express backend with Prisma/Supabase
+// Connects to Spring Boot backend on port 8080
 // In demo mode it swaps to a localStorage-backed in-browser store
 const AUTH_TOKEN_STORAGE_KEY = 'job-tracker-auth-token'
 const DEMO_MODE_STORAGE_KEY = 'job-tracker-demo-mode'
-const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_FALLBACK !== 'false'
+const demoFallbackEnabled = import.meta.env.VITE_API_BASE_URL !== 'false'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
   headers: {
     'Content-Type': 'application/json',
   },
