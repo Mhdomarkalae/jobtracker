@@ -1,0 +1,35 @@
+{
+  "name": "jobtracker",
+  "version": "1.0.0",
+  "description": "Full-stack job application tracker with a Spring Boot API, PostgreSQL persistence, JWT authentication, and a React/Vite frontend.",
+  "scripts": {
+    "prisma:validate": "dotenv -e .env.local -o -- prisma validate",
+    "prisma:pull": "dotenv -e .env.local -o -- prisma db pull",
+    "prisma:generate": "dotenv -e .env.local -o -- prisma generate",
+    "prisma:studio": "dotenv -e .env.local -o -- prisma studio",
+    "prisma:sync": "dotenv -e .env.local -o -- prisma db pull && dotenv -e .env.local -o -- prisma generate",
+    "prisma:migrate:dev": "dotenv -e .env.local -o -- prisma migrate dev",
+    "test:db": "DOTENV_CONFIG_PATH=.env.local node test-db.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mhdomarkalae/jobtracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mhdomarkalae/jobtracker/issues"
+  },
+  "homepage": "https://github.com/Mhdomarkalae/jobtracker#readme",
+  "devDependencies": {
+    "dotenv": "^17.4.1",
+    "dotenv-cli": "^8.0.0",
+    "prisma": "^5.22.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  }
+}

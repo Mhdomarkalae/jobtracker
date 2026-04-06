@@ -1,0 +1,42 @@
+// Prisma talks to Supabase via .env.local (see .env.local.example).
+// Spring Boot keeps using JDBC in the root `.env` / Render — different file, no clash.
+// After URLs are set: npm run prisma:pull (introspect cloud DB) then npm run prisma:generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+  relationMode = "foreignKeys"
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  jobs  Job[]
+}
+
+enum JobStatus {
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+}
+
+model Job {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  company   String
+  position  String
+  status    JobStatus @default(APPLIED)
+  salary    String?
+  location  String
+  notes     String?
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
