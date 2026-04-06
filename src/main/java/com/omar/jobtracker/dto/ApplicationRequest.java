@@ -23,7 +23,6 @@ public class ApplicationRequest {
     private String jobUrl;
 
     @NotNull(message = "dateApplied is required")
-    @NotFutureDate
     private LocalDate dateApplied;
 
     @NotNull(message = "currentStatus is required")
