@@ -45,7 +45,7 @@ function Dashboard() {
         setSummary(summaryData)
         setTimeline(
           Object.entries(timelineData.applicationsByPeriod ?? {}).map(([period, count]) => {
-            const weekNum = period.replace('2026 W', 'W')
+            const weekNum = period.replace('2026 W', 'Week ')
             return { period: weekNum, count, originalPeriod: period }
           }),
         )
