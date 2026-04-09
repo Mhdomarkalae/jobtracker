@@ -1,83 +1,82 @@
 # Job Tracker
 
-Full-stack job application tracker with a **Spring Boot API, Prisma/Supabase PostgreSQL**, and a **React/Vite frontend**.
+A full-stack web application for tracking job applications throughout the hiring process.
 
-For a guided code map, see [`CODE_WALKTHROUGH.md`](/Users/mhdomarkalae/IdeaProjects/jobtracker/CODE_WALKTHROUGH.md).
+## Overview
 
-## Stack
+Job Tracker helps you manage your job search by organizing applications, tracking interview progress, and visualizing your pipeline. Built with modern technologies and designed for a seamless user experience.
 
-- **Backend**: Spring Boot 3, Spring Data JPA, Spring Security, PostgreSQL, JWT, Maven
-- **Frontend**: React 18, Vite, Tailwind CSS, React Router, Axios
-- **Database**: Supabase (managed PostgreSQL with connection pooling)
+## Tech Stack
 
-## Quick Start
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, Vite, Tailwind CSS |
+| Backend | Spring Boot 3, Spring Security |
+| Database | PostgreSQL (Supabase) |
+| Authentication | JWT, BCrypt |
+
+## Features
+
+- **Application Management** - Track job applications with company, position, salary, and status
+- **Interview Scheduling** - Schedule and manage interview rounds for each application
+- **Status Tracking** - Visual timeline of application status changes
+- **Analytics Dashboard** - Real-time pipeline metrics and submission trends
+- **Dark/Light Mode** - Animated theme switching for comfortable viewing
+- **User Authentication** - Secure account system with JWT tokens
+
+## Getting Started
 
 ### Prerequisites
-- Java 17+ and Maven
+
+- Java 17+
 - Node.js 20+
-- Supabase account
+- PostgreSQL database (local or Supabase)
 
-### 1. Environment Setup
-
-
-### 2. Start Backend (Terminal 1)
+### Backend
 
 ```bash
+# Configure environment
+cp .env.example .env
+# Edit .env with your database credentials
+
+# Start backend
 ./mvnw spring-boot:run
 ```
 
-Waits for: `Started JobTrackerApplication`
-API runs at: `http://localhost:8080/api`
+API runs at `http://localhost:8080/api`
 
-### 3. Start Frontend (Terminal 2)
+### Frontend
 
 ```bash
 cd frontend
-npm install  # First time only
+npm install
 npm run dev
 ```
 
-Then open: **http://localhost:5173**
+App runs at `http://localhost:5173`
 
-## API Endpoints
+## Project Structure
 
-**Authentication:**
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/login` - Login  
-- `GET /api/auth/me` - Current user (protected)
-
-**Jobs (all require Bearer token):**
-- `GET /api/jobs` - List jobs
-- `POST /api/jobs` - Create job
-- `PUT /api/jobs/:id` - Update job
-- `DELETE /api/jobs/:id` - Delete job
-- `PATCH /api/jobs/:id/status` - Update status
-
-**Interviews:**
-- `GET /api/jobs/:id/interviews` - List interviews
-- `POST /api/jobs/:id/interviews` - Create interview
-- `PUT /api/interviews/:id` - Update interview
-- `DELETE /api/interviews/:id` - Delete interview
-
-**Analytics:**
-- `GET /api/analytics/summary` - Get summary stats
-- `GET /api/analytics/timeline` - Get timeline data
-
-## Security Features
-
-✅ JWT authentication with 24-hour expiration
-✅ Password hashing with BCrypt
-✅ User data isolation (users only see their own jobs)
-✅ Protected endpoints require Bearer token
-✅ CORS configured for localhost
-✅ Input validation on all endpoints
-
-## Testing
-
-```bash
-# Test database connection
-npm run test:db
-
-# Build frontend
-cd frontend && npm run build
 ```
+jobtracker/
+├── src/main/java/     # Spring Boot backend
+├── frontend/          # React frontend
+│   ├── src/
+│   │   ├── pages/     # Page components
+│   │   ├── components/ # Reusable UI components
+│   │   ├── services/  # API client
+│   │   └── context/   # React context providers
+│   └── ...
+└── ...
+```
+
+## Security
+
+- JWT-based authentication with configurable expiration
+- BCrypt password hashing
+- User data isolation (each user sees only their own data)
+- Input validation on all endpoints
+
+## License
+
+MIT
