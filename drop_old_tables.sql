@@ -1,5 +1,0 @@
--- Drop old Prisma tables
-DROP TABLE IF EXISTS "_prisma_migrations" CASCADE;
-DROP TABLE IF EXISTS "Job" CASCADE;
-DROP TABLE IF EXISTS "jobs" CASCADE;
-DROP TABLE IF EXISTS "users" CASCADE;

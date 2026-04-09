@@ -1,58 +1,64 @@
-HELP.md
+# Maven
 target/
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!.mvn/wrapper/maven-wrapper.properties
 
-### STS ###
-.apt_generated
+# IDE - Eclipse
 .classpath
-.factoryclass
+.factorypath
 .project
-.settings
+.settings/
+.apt_generated
+.factoryclass
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# IDE - IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# IDE - NetBeans
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# IDE - VS Code
 .vscode/
 
-### Node (Prisma tooling at repo root) ###
-/node_modules/
+# Build outputs
+build/
+dist/
+*.class
+*.jar
+*.war
 
-### Frontend ###
+# Node
+node_modules/
 frontend/node_modules/
-frontend/dist/
 
-### Local tools ###
-.tools/
-
-### Environment - NEVER COMMIT SENSITIVE FILES ###
+# Environment - NEVER COMMIT SENSITIVE FILES
 .env
 .env.local
 .env.*.local
+!.env.example
 frontend/.env
 frontend/.env.local
 frontend/.env.*.local
-!.env.example
-!.env.local.example
 !frontend/.env.example
 
-### Prisma ###
-/src/generated/prisma
-prisma/.env
+# Local tools
+.tools/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in repo)
+HELP.md
