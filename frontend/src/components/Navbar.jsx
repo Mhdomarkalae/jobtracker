@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import ThemeToggle from './ThemeToggle'
 
 function linkClassName({ isActive }) {
   return [
@@ -52,9 +53,7 @@ function Navbar({ theme, onToggleTheme, user, onLogout, isDemoMode = false }) {
           <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 lg:block">
             {user?.email}
           </div>
-          <button type="button" className="button-secondary" onClick={onToggleTheme}>
-            Theme: {theme === 'dark' ? 'Dark' : 'Light'}
-          </button>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <nav className="flex items-center gap-2 md:hidden">
             <NavLink to="/" className={linkClassName} end>
               Dashboard

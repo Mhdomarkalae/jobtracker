@@ -55,8 +55,15 @@ function App() {
   const [theme, setTheme] = useState(getInitialTheme)
 
   useEffect(() => {
+    document.documentElement.classList.add('theme-transition')
     document.documentElement.classList.toggle('dark', theme === 'dark')
     window.localStorage.setItem('job-tracker-theme', theme)
+    
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove('theme-transition')
+    }, 500)
+    
+    return () => clearTimeout(timer)
   }, [theme])
 
   return (
