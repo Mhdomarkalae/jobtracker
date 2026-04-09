@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { checkBackendAvailability } from '../services/api'
 
 function Signup() {
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ function Signup() {
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [backendUnavailable, setBackendUnavailable] = useState(false)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -53,8 +55,16 @@ function Signup() {
 
     setIsSubmitting(true)
     setSubmitError('')
+    setBackendUnavailable(false)
 
     try {
+      const isAvailable = await checkBackendAvailability()
+      if (!isAvailable) {
+        setBackendUnavailable(true)
+        setIsSubmitting(false)
+        return
+      }
+
       await signup({
         email: formValues.email.trim(),
         password: formValues.password,
@@ -90,6 +100,30 @@ function Signup() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="text-sm">Not ready to create an account yet? Open the guest demo and explore the project first.</p>
+              </div>
+            </div>
+          ) : null}
+
+          {backendUnavailable ? (
+            <div className="mb-6 rounded-2xl border border-rose-200/50 bg-rose-50/80 p-5 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+              <div className="flex items-start gap-3">
+                <svg className="mt-0.5 h-5 w-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm font-semibold">Backend unavailable</p>
+                  <p className="mt-1 text-sm">Account creation requires a backend connection. Try the demo mode instead, or deploy the backend to enable signup.</p>
+                  <button
+                    type="button"
+                    className="mt-3 text-sm font-semibold text-brand-600 hover:text-brand-700"
+                    onClick={() => {
+                      continueWithDemo()
+                      navigate('/', { replace: true })
+                    }}
+                  >
+                    Continue to demo →
+                  </button>
+                </div>
               </div>
             </div>
           ) : null}
