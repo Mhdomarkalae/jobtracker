@@ -71,7 +71,7 @@ function ApplicationsList() {
       return 'No applications yet.'
     }
 
-    return `No applications with status ${selectedStatus}.`
+    return `No applications with status "${selectedStatus}".`
   }, [selectedStatus])
 
   return (
@@ -81,7 +81,7 @@ function ApplicationsList() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Pipeline view</p>
             <h1 className="mt-3 text-4xl font-semibold">Applications</h1>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400">
               Filter by stage, scan the full pipeline, and jump directly into the roles that need attention.
             </p>
           </div>
@@ -90,7 +90,7 @@ function ApplicationsList() {
             <select
               value={selectedStatus}
               onChange={(event) => setSelectedStatus(event.target.value)}
-              className="field-input min-w-[210px]"
+              className="field-input min-w-[180px]"
             >
               <option value="ALL">All statuses</option>
               {APPLICATION_STATUS_OPTIONS.map((status) => (
@@ -100,6 +100,9 @@ function ApplicationsList() {
               ))}
             </select>
             <Link to="/applications/new" className="button-primary">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
               Add Application
             </Link>
           </div>
@@ -107,7 +110,9 @@ function ApplicationsList() {
       </section>
 
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">{error}</div>
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
+          {error}
+        </div>
       ) : null}
 
       {loading ? (
@@ -119,14 +124,24 @@ function ApplicationsList() {
         </div>
       ) : applications.length === 0 ? (
         <div className="panel px-6 py-16 text-center">
-          <p className="text-2xl font-semibold text-slate-950 dark:text-slate-50">{emptyMessage}</p>
-          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Use the add button to create and track your next opportunity.</p>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+            <svg className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{emptyMessage}</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Use the add button to create and track your next opportunity.</p>
           <Link to="/applications/new" className="button-primary mt-6">
             Add Application
           </Link>
         </div>
       ) : (
         <>
+          <div className="panel-muted p-4 text-sm text-slate-500 dark:text-slate-400">
+            Showing {applications.length} application{applications.length !== 1 ? 's' : ''}
+            {selectedStatus !== 'ALL' && ` with status "${selectedStatus}"`}
+          </div>
+
           <div className="space-y-4 md:hidden">
             {applications.map((application) => (
               <div
@@ -139,12 +154,15 @@ function ApplicationsList() {
                     navigate(`/applications/${application.id}`)
                   }
                 }}
-                className="panel w-full p-5 text-left transition hover:-translate-y-0.5"
+                className="panel w-full cursor-pointer p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-lg font-semibold text-slate-950 dark:text-slate-50">{application.companyName}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">{application.companyName}</p>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{application.positionTitle}</p>
+                    {application.location && (
+                      <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">{application.location}</p>
+                    )}
                   </div>
                   <StatusBadge status={application.currentStatus} />
                 </div>
@@ -172,8 +190,8 @@ function ApplicationsList() {
 
           <div className="panel hidden overflow-hidden md:block">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50/90 dark:bg-slate-950/80">
+              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                <thead className="bg-slate-50/80 dark:bg-slate-900/80">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Company
@@ -185,41 +203,49 @@ function ApplicationsList() {
                       Status
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                      Date Applied
+                      Applied
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                      Location
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                   {applications.map((application) => (
                     <tr
                       key={application.id}
-                      className="cursor-pointer bg-white transition hover:bg-brand-50/40 dark:bg-slate-950/40 dark:hover:bg-brand-500/10"
+                      className="cursor-pointer bg-white transition-all duration-200 hover:bg-brand-50/50 dark:bg-slate-900 dark:hover:bg-brand-500/10"
                       onClick={() => navigate(`/applications/${application.id}`)}
                     >
                       <td className="px-6 py-5">
-                        <p className="font-semibold text-slate-950 dark:text-slate-50">{application.companyName}</p>
+                        <p className="font-semibold text-slate-900 dark:text-slate-50">{application.companyName}</p>
                       </td>
                       <td className="px-6 py-5 text-slate-600 dark:text-slate-300">{application.positionTitle}</td>
                       <td className="px-6 py-5">
                         <StatusBadge status={application.currentStatus} />
                       </td>
-                      <td className="px-6 py-5 text-slate-600 dark:text-slate-300">{formatDate(application.dateApplied)}</td>
+                      <td className="whitespace-nowrap px-6 py-5 text-slate-600 dark:text-slate-300">
+                        {formatDate(application.dateApplied)}
+                      </td>
+                      <td className="px-6 py-5 text-slate-500 dark:text-slate-400">
+                        {application.location || '-'}
+                      </td>
                       <td className="px-6 py-5">
-                        <div className="flex justify-end gap-3">
+                        <div className="flex justify-end gap-2">
                           <Link
                             to={`/applications/${application.id}`}
                             onClick={(event) => event.stopPropagation()}
-                            className="button-secondary"
+                            className="button-ghost text-xs"
                           >
-                            View Details
+                            View
                           </Link>
                           <button
                             type="button"
                             onClick={(event) => handleDelete(event, application.id)}
-                            className="button-danger"
+                            className="button-ghost text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-500/10"
                             disabled={deletingId === application.id}
                           >
                             {deletingId === application.id ? 'Deleting...' : 'Delete'}

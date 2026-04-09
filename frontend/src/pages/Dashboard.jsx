@@ -44,10 +44,10 @@ function Dashboard() {
 
         setSummary(summaryData)
         setTimeline(
-          Object.entries(timelineData.applicationsByPeriod ?? {}).map(([period, count]) => ({
-            period,
-            count,
-          })),
+          Object.entries(timelineData.applicationsByPeriod ?? {}).map(([period, count]) => {
+            const weekNum = period.replace('2026 W', 'W')
+            return { period: weekNum, count, originalPeriod: period }
+          }),
         )
         setRecentApplications(
           sortApplicationsByDateApplied(applicationsPage.content ?? []).slice(0, 5),
