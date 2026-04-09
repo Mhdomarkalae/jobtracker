@@ -45,8 +45,19 @@ function Dashboard() {
         setSummary(summaryData)
         setTimeline(
           Object.entries(timelineData.applicationsByPeriod ?? {}).map(([period, count]) => {
-            const weekNum = period.replace('2026 W', 'Week ')
-            return { period: weekNum, count, originalPeriod: period }
+            const match = period.match(/(\d{4}) W(\d+)/)
+            if (match) {
+              const year = parseInt(match[1])
+              const week = parseInt(match[2])
+              const jan1 = new Date(year, 0, 1)
+              const daysOffset = (week - 1) * 7
+              const weekDate = new Date(jan1)
+              weekDate.setDate(jan1.getDate() + daysOffset)
+              const month = weekDate.toLocaleDateString('en-US', { month: 'short' })
+              const day = weekDate.getDate()
+              return { period: `${month} ${day}`, count, originalPeriod: period }
+            }
+            return { period, count, originalPeriod: period }
           }),
         )
         setRecentApplications(
