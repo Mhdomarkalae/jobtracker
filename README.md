@@ -19,15 +19,6 @@ For a guided code map, see [`CODE_WALKTHROUGH.md`](/Users/mhdomarkalae/IdeaProje
 
 ### 1. Environment Setup
 
-Set your `.env` file with Supabase credentials:
-```env
-DATABASE_URL=jdbc:postgresql://db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require&connectTimeout=30
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=[YOUR-PASSWORD]
-JWT_SECRET=your-secret-key-change-in-production
-JWT_EXPIRATION_MS=86400000
-APP_ALLOWED_ORIGIN_PATTERNS=http://localhost:*,http://127.0.0.1:*
-```
 
 ### 2. Start Backend (Terminal 1)
 
