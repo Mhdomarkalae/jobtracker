@@ -1,5 +1,9 @@
 # Job Tracker
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://www.java.com/)
+[![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
+
 A full-stack web application for tracking job applications throughout the hiring process.
 
 ## Overview
@@ -32,7 +36,7 @@ Job Tracker helps you manage your job search by organizing applications, trackin
 - Node.js 20+
 - PostgreSQL database (local or Supabase)
 
-### Backend
+### Backend Setup
 
 ```bash
 # Configure environment
@@ -45,7 +49,7 @@ cp .env.example .env
 
 API runs at `http://localhost:8080/api`
 
-### Frontend
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -69,6 +73,17 @@ jobtracker/
 │   └── ...
 └── ...
 ```
+
+## Environment Variables
+
+Configure the following in your `.env` file:
+
+| Variable | Description |
+|----------|-------------|
+| `DB_URL` | PostgreSQL connection URL |
+| `DB_USER` | Database username |
+| `DB_PASSWORD` | Database password |
+| `JWT_SECRET` | Secret key for JWT tokens |
 
 ## Security
 
