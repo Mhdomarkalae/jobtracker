@@ -19,6 +19,12 @@ target/
 *.iml
 *.ipr
 
+# IDE - Eclipse
+.classpath
+.factorypath
+.project
+.settings/
+
 # IDE - NetBeans
 /nbproject/private/
 /nbbuild/

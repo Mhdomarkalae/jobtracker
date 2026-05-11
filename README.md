@@ -4,29 +4,29 @@
 [![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://www.java.com/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
 
-A full-stack web application for tracking job applications throughout the hiring process.
+> [Live Demo](https://jobtracker.vercel.app) &mdash; Explore the app with built-in demo mode (no login required).
 
-## Overview
-
-Job Tracker helps you manage your job search by organizing applications, tracking interview progress, and visualizing your pipeline. Built with modern technologies and designed for a seamless user experience.
+A full-stack web application for tracking job applications throughout the hiring process. Built with Spring Boot and React, featuring real-time analytics, interview scheduling, and an animated dark/light theme.
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 18, Vite, Tailwind CSS |
-| Backend | Spring Boot 3, Spring Security |
+| Backend | Spring Boot 3, Spring Security, JPA/Hibernate |
 | Database | PostgreSQL (Supabase) |
 | Authentication | JWT, BCrypt |
+| Deployment | Render (API), Vercel (frontend) |
 
 ## Features
 
-- **Application Management** - Track job applications with company, position, salary, and status
-- **Interview Scheduling** - Schedule and manage interview rounds for each application
-- **Status Tracking** - Visual timeline of application status changes
-- **Analytics Dashboard** - Real-time pipeline metrics and submission trends
-- **Dark/Light Mode** - Animated theme switching for comfortable viewing
-- **User Authentication** - Secure account system with JWT tokens
+- **Application Management** &mdash; Track job applications with company, position, salary, and status
+- **Interview Scheduling** &mdash; Schedule and manage interview rounds for each application
+- **Status Tracking** &mdash; Visual timeline of application status changes
+- **Analytics Dashboard** &mdash; Real-time pipeline metrics and submission trends
+- **Dark/Light Mode** &mdash; Animated theme switching for comfortable viewing
+- **User Authentication** &mdash; Secure account system with JWT tokens
+- **Demo Mode** &mdash; Explore all features instantly with preloaded sample data
 
 ## Getting Started
 
@@ -53,37 +53,50 @@ API runs at `http://localhost:8080/api`
 
 ```bash
 cd frontend
+cp .env.example .env
+# Edit .env if you need a custom API URL
+
 npm install
 npm run dev
 ```
 
 App runs at `http://localhost:5173`
 
+> **Note:** When the backend is unreachable, the frontend automatically falls back to a fully functional demo mode using browser-local data. No database required to explore the UI.
+
+## Environment Variables
+
+Configure the following in your `.env` file (root directory):
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL JDBC connection URL |
+| `DATABASE_USERNAME` | Database username |
+| `DATABASE_PASSWORD` | Database password |
+| `JWT_SECRET` | Secret key for signing JWT tokens |
+| `JWT_EXPIRATION_MS` | JWT token lifetime in milliseconds |
+| `APP_ALLOWED_ORIGIN_PATTERNS` | Allowed CORS origin patterns |
+
 ## Project Structure
 
 ```
 jobtracker/
-├── src/main/java/     # Spring Boot backend
-├── frontend/          # React frontend
+├── src/main/java/         # Spring Boot backend
+├── src/main/resources/    # Backend configuration
+├── src/test/              # Backend tests
+├── frontend/              # React frontend
 │   ├── src/
-│   │   ├── pages/     # Page components
-│   │   ├── components/ # Reusable UI components
-│   │   ├── services/  # API client
-│   │   └── context/   # React context providers
+│   │   ├── pages/         # Page components
+│   │   ├── components/    # Reusable UI components
+│   │   ├── services/      # API client and demo store
+│   │   ├── context/       # React context providers
+│   │   └── demo/          # Demo mode data store
 │   └── ...
-└── ...
+├── .env.example           # Environment variable template
+├── Dockerfile             # Container build
+├── render.yaml            # Render deployment config
+└── start-backend.sh       # Convenience script to run backend
 ```
-
-## Environment Variables
-
-Configure the following in your `.env` file:
-
-| Variable | Description |
-|----------|-------------|
-| `DB_URL` | PostgreSQL connection URL |
-| `DB_USER` | Database username |
-| `DB_PASSWORD` | Database password |
-| `JWT_SECRET` | Secret key for JWT tokens |
 
 ## Security
 
@@ -91,6 +104,8 @@ Configure the following in your `.env` file:
 - BCrypt password hashing
 - User data isolation (each user sees only their own data)
 - Input validation on all endpoints
+- CORS restricted to configured origin patterns
+- HikariCP connection pooling with timeout limits
 
 ## License
 
