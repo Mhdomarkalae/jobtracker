@@ -137,26 +137,26 @@ function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="dashboard-shell space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.45fr,0.95fr]">
-        <div className="panel overflow-hidden p-8 md:p-10">
+        <div className="dashboard-card overflow-hidden p-8 md:p-10">
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-300">
                   Command Center
                 </p>
-                <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">
+                <h1 className="mt-3 text-4xl font-semibold text-slate-50 sm:text-5xl">
                   Keep the search legible while the market stays noisy.
                 </h1>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400">
+                <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
                   See which roles are progressing, where conversations are slowing down, and which applications still deserve follow-up energy this week.
                 </p>
               </div>
-              <div className="rounded-[1.75rem] border border-white/65 bg-white/55 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-950/45">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Response rate</p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-white">{responseRate}%</p>
-                <p className="mt-2 max-w-[15rem] text-sm text-slate-500 dark:text-slate-400">
+              <div className="dashboard-widget p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Response rate</p>
+                <p className="mt-3 text-4xl font-semibold text-slate-50">{responseRate}%</p>
+                <p className="mt-2 max-w-[15rem] text-sm text-slate-400">
                   A quick read on whether your outreach is converting into actual conversations.
                 </p>
               </div>
@@ -164,29 +164,29 @@ function Dashboard() {
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {overviewMetrics.map((metric) => (
-                <div key={metric.label} className="panel-muted p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{metric.label}</p>
-                  <p className="mt-3 text-3xl font-semibold text-slate-900 dark:text-white">{metric.value}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{metric.note}</p>
+                <div key={metric.label} className="dashboard-subcard p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{metric.label}</p>
+                  <p className="mt-3 text-3xl font-semibold text-slate-50">{metric.value}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">{metric.note}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="panel flex flex-col justify-between overflow-hidden p-8 md:p-10">
+        <div className="dashboard-card flex flex-col justify-between overflow-hidden p-8 md:p-10">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600 dark:text-brand-400">Snapshot</p>
-            <h2 className="mt-3 text-3xl font-semibold">Today&apos;s search posture</h2>
-            <p className="mt-3 max-w-sm text-sm leading-7 text-slate-500 dark:text-slate-400">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-300">Snapshot</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-50">Today&apos;s search posture</h2>
+            <p className="mt-3 max-w-sm text-sm leading-7 text-slate-400">
               A single panel for volume, momentum, and whether the pipeline still has forward pressure.
             </p>
           </div>
           <div className="mt-8 grid gap-4">
-            <div className="rounded-[1.75rem] border border-white/70 bg-[linear-gradient(135deg,rgba(37,99,235,0.16),rgba(125,211,252,0.12))] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] dark:border-slate-800/60 dark:bg-[linear-gradient(135deg,rgba(37,99,235,0.16),rgba(99,102,241,0.12))]">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">Total applications</p>
-              <p className="mt-3 text-6xl font-bold text-slate-950 dark:text-white">{totalApplications}</p>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Everything currently tracked in the system.</p>
+            <div className="dashboard-widget dashboard-widget--highlight p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Total applications</p>
+              <p className="mt-3 text-6xl font-bold text-slate-50">{totalApplications}</p>
+              <p className="mt-2 text-sm text-slate-300">Everything currently tracked in the system.</p>
             </div>
             <Link to="/applications" className="button-primary w-full justify-center">
               Review applications
@@ -201,15 +201,15 @@ function Dashboard() {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {APPLICATION_STATUS_OPTIONS.map((status) => (
-          <div key={status} className="panel-muted group p-5 transition-all duration-300 hover:scale-[1.01]">
+          <div key={status} className="dashboard-subcard group p-5 transition-all duration-300 hover:scale-[1.01]">
             <div className="flex items-center gap-3">
               <div 
-                className="h-2.5 w-2.5 rounded-full shadow-[0_0_0_6px_rgba(255,255,255,0.24)]" 
+                className="h-2.5 w-2.5 rounded-full shadow-[0_0_0_6px_rgba(15,23,42,0.45)]" 
                 style={{ backgroundColor: STATUS_META[status].chartColor }}
               />
-              <p className="text-sm text-slate-500 dark:text-slate-400">{STATUS_META[status].label}</p>
+              <p className="text-sm text-slate-400">{STATUS_META[status].label}</p>
             </div>
-            <p className="mt-3 text-3xl font-semibold text-slate-900 dark:text-white">
+            <p className="mt-3 text-3xl font-semibold text-slate-50">
               {summary?.applicationsByStatus?.[status] ?? 0}
             </p>
           </div>
@@ -217,36 +217,36 @@ function Dashboard() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr,0.8fr]">
-        <div className="panel p-6 md:p-8">
+        <div className="dashboard-card p-6 md:p-8">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold">Status breakdown</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">See where your current pipeline is concentrated.</p>
+              <h2 className="text-2xl font-semibold text-slate-50">Status breakdown</h2>
+              <p className="mt-1 text-sm text-slate-400">See where your current pipeline is concentrated.</p>
             </div>
           </div>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusChartData}>
-                <CartesianGrid vertical={false} strokeDasharray="4 4" stroke={isDark ? '#334155' : '#d9e1ef'} />
+                <CartesianGrid vertical={false} strokeDasharray="4 4" stroke={isDark ? '#334155' : '#314156'} />
                 <XAxis
                   dataKey="status"
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fill: isDark ? '#94a3b8' : '#5e6b84', fontSize: 12 }}
+                  tick={{ fill: isDark ? '#94a3b8' : '#a3b2c8', fontSize: 12 }}
                 />
                 <YAxis
                   allowDecimals={false}
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fill: isDark ? '#94a3b8' : '#5e6b84', fontSize: 12 }}
+                  tick={{ fill: isDark ? '#94a3b8' : '#a3b2c8', fontSize: 12 }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: isDark ? '#162033' : 'rgba(255,251,247,0.96)',
-                    borderColor: isDark ? '#334155' : '#d9e1ef',
-                    color: isDark ? '#fafafa' : '#18181b',
+                    backgroundColor: '#111827',
+                    borderColor: '#334155',
+                    color: '#f8fafc',
                     borderRadius: '18px',
-                    boxShadow: '0 22px 70px rgba(15,23,42,0.22)',
+                    boxShadow: '0 22px 70px rgba(2,6,23,0.48)',
                   }}
                   cursor={{ fill: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(37,99,235,0.06)' }}
                 />
@@ -260,21 +260,21 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="panel p-6 md:p-8">
+        <div className="dashboard-card p-6 md:p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold">Recent applications</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The latest opportunities entering your tracker.</p>
+            <h2 className="text-2xl font-semibold text-slate-50">Recent applications</h2>
+            <p className="mt-1 text-sm text-slate-400">The latest opportunities entering your tracker.</p>
           </div>
 
           {recentApplications.length === 0 ? (
-            <div className="rounded-[1.75rem] border border-dashed border-white/70 bg-white/45 px-6 py-10 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] backdrop-blur-sm transition-colors dark:border-slate-700 dark:bg-slate-950/45">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-white/75 shadow-[0_20px_44px_-28px_rgba(15,23,42,0.2)] dark:bg-slate-900/70">
+            <div className="dashboard-subcard border-dashed px-6 py-10 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-slate-950/65 shadow-[0_20px_44px_-28px_rgba(2,6,23,0.6)]">
                 <svg className="h-7 w-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">No applications yet</p>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">The first saved role will start your pipeline, trend charts, and follow-up history.</p>
+              <p className="text-lg font-semibold text-slate-50">No applications yet</p>
+              <p className="mt-2 text-sm text-slate-400">The first saved role will start your pipeline, trend charts, and follow-up history.</p>
               <Link to="/applications/new" className="button-primary mt-6">
                 Add Application
               </Link>
@@ -285,15 +285,15 @@ function Dashboard() {
                 <Link
                   key={application.id}
                   to={`/applications/${application.id}`}
-                  className="group flex items-center justify-between gap-4 rounded-[1.35rem] border border-white/70 bg-white/60 px-4 py-4 shadow-[0_18px_44px_-30px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-[0_24px_54px_-30px_rgba(37,99,235,0.2)] dark:border-slate-800/70 dark:bg-slate-950/55 dark:hover:border-brand-500/50 dark:hover:bg-slate-900"
+                  className="dashboard-list-item group flex items-center justify-between gap-4 px-4 py-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-slate-900 dark:text-slate-50 group-hover:text-brand-600 dark:group-hover:text-brand-400">{application.companyName}</p>
-                    <p className="truncate text-sm text-slate-500 dark:text-slate-400">{application.positionTitle}</p>
+                    <p className="truncate font-semibold text-slate-50 group-hover:text-sky-300">{application.companyName}</p>
+                    <p className="truncate text-sm text-slate-400">{application.positionTitle}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <StatusBadge status={application.currentStatus} />
-                    <span className="text-sm text-slate-400 dark:text-slate-500">{formatDate(application.dateApplied)}</span>
+                    <span className="text-sm text-slate-500">{formatDate(application.dateApplied)}</span>
                   </div>
                 </Link>
               ))}
@@ -302,34 +302,34 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel p-6 md:p-8">
+      <section className="dashboard-card p-6 md:p-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold">Application timeline</h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Weekly application volume across the current dataset.</p>
+          <h2 className="text-2xl font-semibold text-slate-50">Application timeline</h2>
+          <p className="mt-1 text-sm text-slate-400">Weekly application volume across the current dataset.</p>
         </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={timeline}>
-              <CartesianGrid vertical={false} strokeDasharray="4 4" stroke={isDark ? '#334155' : '#d9e1ef'} />
+              <CartesianGrid vertical={false} strokeDasharray="4 4" stroke={isDark ? '#334155' : '#314156'} />
               <XAxis
                 dataKey="period"
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: isDark ? '#94a3b8' : '#5e6b84', fontSize: 12 }}
+                tick={{ fill: isDark ? '#94a3b8' : '#a3b2c8', fontSize: 12 }}
               />
               <YAxis
                 allowDecimals={false}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: isDark ? '#94a3b8' : '#5e6b84', fontSize: 12 }}
+                tick={{ fill: isDark ? '#94a3b8' : '#a3b2c8', fontSize: 12 }}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: isDark ? '#162033' : 'rgba(255,251,247,0.96)',
-                  borderColor: isDark ? '#334155' : '#d9e1ef',
-                  color: isDark ? '#fafafa' : '#18181b',
+                  backgroundColor: '#111827',
+                  borderColor: '#334155',
+                  color: '#f8fafc',
                   borderRadius: '18px',
-                  boxShadow: '0 22px 70px rgba(15,23,42,0.22)',
+                  boxShadow: '0 22px 70px rgba(2,6,23,0.48)',
                 }}
               />
               <Line 
