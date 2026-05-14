@@ -20,36 +20,30 @@ export default {
       },
       fontFamily: {
         sans: ['"IBM Plex Sans"', '"Avenir Next"', '"Segoe UI"', 'sans-serif'],
-        display: ['"Space Grotesk"', '"IBM Plex Sans"', '"Avenir Next"', 'sans-serif'],
+        display: ['"IBM Plex Sans"', '"Avenir Next"', '"Segoe UI"', 'sans-serif'],
       },
       boxShadow: {
-        panel: '0 22px 55px -28px rgba(15, 23, 42, 0.28)',
-        'panel-dark': '0 22px 55px -28px rgba(0, 0, 0, 0.5)',
-        glow: '0 0 20px rgba(37, 99, 235, 0.3)',
-        'glow-lg': '0 0 40px rgba(37, 99, 235, 0.4)',
+        surface: '0 1px 2px rgba(15, 23, 42, 0.04)',
+        'surface-md': '0 1px 3px rgba(15, 23, 42, 0.07)',
       },
       animation: {
-        'fade-in': 'fadeIn 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
-        'slide-up': 'slideUp 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
-        'scale-in': 'scaleIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'fade-in': 'fadeIn 400ms ease forwards',
+        'slide-up': 'slideUp 350ms ease forwards',
+        'scale-in': 'scaleIn 220ms ease forwards',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         scaleIn: {
-          '0%': { opacity: '0', transform: 'scale(0.95)' },
-          '100%': { opacity: '1', transform: 'scale(1)' },
+          '0%': { opacity: '0', transform: 'translateY(4px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },

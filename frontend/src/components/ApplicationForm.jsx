@@ -105,12 +105,12 @@ function ApplicationForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {submitError ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-950/40 dark:text-rose-200">
           {submitError}
         </div>
       ) : null}
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label className="field-label" htmlFor="companyName">
             Company Name
@@ -223,7 +223,7 @@ function ApplicationForm({
         </div>
       </div>
 
-      <div className="rounded-[1.4rem] border border-white/60 bg-white/45 px-4 py-3 text-sm text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm dark:border-slate-800/60 dark:bg-slate-950/45 dark:text-slate-300">
+      <div className="rounded-md border border-[#e2e4e9] bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:border-[#1e2029] dark:bg-[#16181f] dark:text-slate-400">
         Keep company, title, timing, and status accurate here. Interviews and history continue to use the same record and identifiers.
       </div>
 

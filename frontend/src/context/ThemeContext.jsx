@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 const THEME_STORAGE_KEY = 'job-tracker-theme'
 
@@ -29,6 +29,7 @@ function applyTheme(theme, shouldAnimate) {
   }
 
   root.classList.toggle('dark', theme === 'dark')
+  root.classList.toggle('light', theme === 'light')
   root.dataset.theme = theme
   root.style.colorScheme = theme
 }
@@ -37,7 +38,7 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(resolveInitialTheme)
   const hasMountedRef = useRef(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     applyTheme(theme, hasMountedRef.current)
     window.localStorage.setItem(THEME_STORAGE_KEY, theme)
 

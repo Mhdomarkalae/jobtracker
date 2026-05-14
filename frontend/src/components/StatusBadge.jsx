@@ -4,11 +4,9 @@ function StatusBadge({ status }) {
   const meta = STATUS_META[status] ?? STATUS_META.APPLIED
 
   return (
-    <span
-      className={`status-badge shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm ${meta.badgeClassName}`}
-    >
-      <span 
-        className="h-1.5 w-1.5 rounded-full" 
+    <span className={`status-badge ${meta.badgeClassName}`}>
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
         style={{ backgroundColor: meta.chartColor }}
       />
       {meta.label}

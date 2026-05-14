@@ -82,12 +82,12 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-950/40 dark:text-rose-200">
           {error}
         </div>
       ) : null}
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label className="field-label" htmlFor="interviewType">
             Interview Type
@@ -170,7 +170,7 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
         />
       </div>
 
-      <label className="flex items-center gap-3 rounded-[1.4rem] border border-white/60 bg-white/45 px-4 py-3 text-sm font-medium text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-950/50 dark:text-slate-200">
+      <label className="flex cursor-pointer items-center gap-3 rounded-md border border-[#e2e4e9] bg-slate-50 px-3 py-2 text-sm text-slate-700 dark:border-[#1e2029] dark:bg-[#16181f] dark:text-slate-200">
         <input
           type="checkbox"
           name="completed"

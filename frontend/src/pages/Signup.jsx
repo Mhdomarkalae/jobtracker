@@ -81,20 +81,20 @@ function Signup() {
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl items-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="grid w-full gap-8 lg:grid-cols-[1.05fr,0.95fr]">
-        <section className="panel overflow-hidden p-8 md:p-10">
+        <section className="panel overflow-hidden p-6 md:p-8">
           <div className="mb-8">
-            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-[1.4rem] bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-lg font-bold text-white shadow-lg shadow-brand-500/25">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#e2e4e9] bg-white text-sm font-semibold text-slate-800 dark:border-[#1e2029] dark:bg-[#111318] dark:text-slate-200">
               JT
             </div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Job Tracker</p>
-            <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">Create your account</h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 dark:text-slate-400">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Job Tracker</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Create your account</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               Your jobs, interviews, analytics, and status history stay tied to your own login and database records.
             </p>
           </div>
           
           {canUseDemoFallback ? (
-            <div className="mb-6 rounded-2xl border border-amber-200/50 bg-amber-50/80 p-5 backdrop-blur-sm dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+            <div className="mb-4 rounded-md border border-amber-200/80 bg-amber-50 p-4 text-amber-950 dark:border-amber-500/25 dark:bg-amber-950/40 dark:text-amber-100">
               <div className="flex items-start gap-3">
                 <svg className="mt-0.5 h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -105,7 +105,7 @@ function Signup() {
           ) : null}
 
           {backendUnavailable ? (
-            <div className="mb-6 rounded-2xl border border-rose-200/50 bg-rose-50/80 p-5 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+            <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-4 dark:border-rose-500/30 dark:bg-rose-950/40 dark:text-rose-100">
               <div className="flex items-start gap-3">
                 <svg className="mt-0.5 h-5 w-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -115,7 +115,7 @@ function Signup() {
                   <p className="mt-1 text-sm">Account creation requires a backend connection. Try the demo mode instead, or deploy the backend to enable signup.</p>
                   <button
                     type="button"
-                    className="mt-3 text-sm font-semibold text-brand-600 hover:text-brand-700"
+                    className="mt-3 text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:text-slate-100"
                     onClick={() => {
                       continueWithDemo()
                       navigate('/', { replace: true })
@@ -128,29 +128,29 @@ function Signup() {
             </div>
           ) : null}
           
-          <div className="rounded-[1.6rem] border border-white/60 bg-gradient-to-r from-brand-500/10 to-indigo-500/10 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] dark:border-slate-800/60 dark:from-brand-500/20 dark:to-indigo-500/20">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">What you get:</p>
+          <div className="rounded-lg border border-[#e2e4e9] bg-slate-50 p-4 dark:border-[#1e2029] dark:bg-[#16181f]">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">What you get</p>
             <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
               <li className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 JWT authentication & secure password hashing
               </li>
               <li className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Persistent PostgreSQL database (Supabase)
               </li>
               <li className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Interview tracking & status history
               </li>
               <li className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Analytics dashboard & timeline charts
@@ -159,18 +159,18 @@ function Signup() {
           </div>
         </section>
 
-        <section className="panel p-8 md:p-10">
-          <h2 className="text-3xl font-semibold">Sign up</h2>
+        <section className="panel p-6 md:p-8">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Sign up</h2>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-brand-600 transition hover:text-brand-700">
+            <Link to="/login" className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:text-slate-100">
               Log in
             </Link>
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {submitError ? (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
+              <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-950/40 dark:text-rose-200">
                 {submitError}
               </div>
             ) : null}

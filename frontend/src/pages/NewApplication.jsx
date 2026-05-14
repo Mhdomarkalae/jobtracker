@@ -15,31 +15,31 @@ function NewApplication() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <section className="grid gap-6 xl:grid-cols-[0.95fr,1.25fr]">
-        <div className="panel p-6 md:p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">New record</p>
-          <h1 className="mt-3 text-4xl font-semibold">Add an application</h1>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-            Capture the essentials now so follow-ups, interviews, and status updates stay anchored to one clear record.
+        <div className="panel p-6">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">New record</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Add an application</h1>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+            Capture the essentials so follow-ups, interviews, and status updates stay tied to one record.
           </p>
-          <div className="mt-8 space-y-4">
-            <div className="panel-muted p-5">
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">What to capture</p>
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-                Company, role, date applied, current stage, compensation, and any context that will matter once recruiter replies start coming in.
+          <div className="mt-6 space-y-4">
+            <div className="panel-muted p-4">
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">What to capture</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                Company, role, date applied, stage, compensation, and context you will need later.
               </p>
             </div>
-            <div className="panel-muted p-5">
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Why it matters</p>
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-                This same record drives analytics, the application list, interview scheduling, and status history.
+            <div className="panel-muted p-4">
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Why it matters</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                This record powers analytics, the application list, interviews, and status history.
               </p>
             </div>
           </div>
         </div>
 
-        <section className="panel p-6 md:p-8">
+        <section className="panel p-6">
           <ApplicationForm
             onSubmit={handleCreate}
             onCancel={() => navigate('/applications')}

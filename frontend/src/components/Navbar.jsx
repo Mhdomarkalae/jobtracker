@@ -3,10 +3,10 @@ import ThemeToggle from './ThemeToggle'
 
 function linkClassName({ isActive }) {
   return [
-    'rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200',
+    'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150',
     isActive
-      ? 'border border-brand-500/30 bg-brand-600 text-white shadow-lg shadow-brand-500/20'
-      : 'border border-transparent text-slate-600 hover:border-white/60 hover:bg-white/70 hover:text-slate-900 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-900/70 dark:hover:text-slate-50',
+      ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100',
   ].join(' ')
 }
 
@@ -14,27 +14,23 @@ function Navbar({ user, onLogout, isDemoMode = false }) {
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/50 bg-[rgba(255,251,247,0.64)] backdrop-blur-2xl dark:border-slate-800/70 dark:bg-[rgba(9,17,31,0.72)]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-4">
+    <header className="sticky top-0 z-30 border-b border-[#e2e4e9] bg-[#f5f6f8] dark:border-[#1e2029] dark:bg-[#0a0b0e]">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-6">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex min-w-0 items-center gap-3 rounded-[1.4rem] border border-white/70 bg-white/70 px-3 py-2 text-left shadow-[0_18px_44px_-28px_rgba(15,23,42,0.22)] transition hover:-translate-y-0.5 hover:border-white dark:border-slate-800/70 dark:bg-slate-950/70 dark:hover:border-slate-700"
+            className="flex min-w-0 items-center gap-2 rounded-md border border-transparent py-1 text-left transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-sm font-bold text-white shadow-lg shadow-brand-500/30">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#e2e4e9] bg-white text-xs font-semibold text-slate-800 dark:border-[#1e2029] dark:bg-[#111318] dark:text-slate-200">
               JT
             </span>
             <span className="min-w-0">
-              <span className="block text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-                Job Tracker
-              </span>
-              <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-                Application Pipeline
-              </span>
+              <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Job Tracker</span>
+              <span className="block truncate text-sm font-medium text-slate-900 dark:text-slate-100">Pipeline</span>
             </span>
           </button>
-          <nav className="hidden items-center gap-2 rounded-full border border-white/60 bg-white/60 p-1.5 shadow-[0_18px_44px_-30px_rgba(15,23,42,0.18)] md:flex dark:border-slate-800/70 dark:bg-slate-950/60">
+          <nav className="hidden items-center gap-1 md:flex">
             <NavLink to="/" className={linkClassName} end>
               Dashboard
             </NavLink>
@@ -44,19 +40,19 @@ function Navbar({ user, onLogout, isDemoMode = false }) {
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {isDemoMode ? (
-            <div className="hidden rounded-full border border-amber-300/60 bg-amber-50/85 px-4 py-2 text-sm font-semibold text-amber-800 shadow-sm dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-100 lg:block">
-              Guest Demo
+            <div className="hidden rounded-md border border-amber-200/80 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-900 dark:border-amber-500/25 dark:bg-amber-950/40 dark:text-amber-100 lg:block">
+              Guest demo
             </div>
           ) : null}
-          <div className="hidden rounded-full border border-white/70 bg-white/65 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm dark:border-slate-800/70 dark:bg-slate-950/65 dark:text-slate-300 lg:block">
+          <div className="hidden max-w-[200px] truncate rounded-md border border-[#e2e4e9] bg-white px-2 py-1 text-xs text-slate-600 dark:border-[#1e2029] dark:bg-[#111318] dark:text-slate-400 lg:block">
             {user?.email}
           </div>
           <ThemeToggle />
-          <nav className="flex items-center gap-2 rounded-full border border-white/60 bg-white/60 p-1.5 shadow-sm md:hidden dark:border-slate-800/70 dark:bg-slate-950/60">
+          <nav className="flex items-center gap-1 md:hidden">
             <NavLink to="/" className={linkClassName} end>
-              Dashboard
+              Home
             </NavLink>
             <NavLink to="/applications" className={linkClassName}>
               Apps
@@ -67,10 +63,10 @@ function Navbar({ user, onLogout, isDemoMode = false }) {
             className="button-primary hidden sm:inline-flex"
             onClick={() => navigate('/applications/new')}
           >
-            Add Application
+            Add application
           </button>
           <button type="button" className="button-secondary" onClick={onLogout}>
-            {isDemoMode ? 'Exit Guest Demo' : 'Log out'}
+            {isDemoMode ? 'Exit demo' : 'Log out'}
           </button>
         </div>
       </div>
