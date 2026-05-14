@@ -4,14 +4,16 @@
 
 :root {
   font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   color: #172033;
   color-scheme: light;
   --surface-0: rgba(255, 251, 247, 0.92);
   --surface-1: rgba(255, 255, 255, 0.72);
   --surface-2: rgba(244, 240, 235, 0.7);
   --surface-border: rgba(148, 163, 184, 0.18);
-  --surface-shadow: 0 22px 60px -34px rgba(27, 39, 66, 0.28);
-  --surface-shadow-strong: 0 28px 80px -36px rgba(27, 39, 66, 0.34);
+  --surface-shadow: 0 26px 70px -34px rgba(27, 39, 66, 0.28);
+  --surface-shadow-strong: 0 36px 92px -36px rgba(27, 39, 66, 0.34);
   --text-muted: #5e6b84;
   background:
     radial-gradient(circle at top left, rgba(87, 133, 255, 0.16), transparent 38%),
@@ -157,6 +159,7 @@ html {
 
   .panel:hover {
     box-shadow: var(--surface-shadow-strong);
+    transform: translateY(-6px);
   }
 
   .panel-muted {
@@ -168,11 +171,23 @@ html {
   }
 
   .button-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white;
-    background-image: linear-gradient(135deg, #2563eb, #3b82f6);
-    @apply transition-all duration-200 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/25 hover:-translate-y-0.5;
-    @apply disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none;
-    @apply active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-semibold text-white;
+    background-image: linear-gradient(135deg, #1e40af, #2563eb);
+    @apply transition-transform transition-shadow duration-200;
+    box-shadow: 0 8px 30px -12px rgba(37,99,235,0.25);
+  }
+  .button-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px -20px rgba(37,99,235,0.28);
+  }
+  .button-primary:active {
+    transform: translateY(-1px) scale(0.99);
+  }
+  .button-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
   }
 
   .button-secondary {
@@ -322,34 +337,53 @@ html {
   }
 
   .theme-toggle__icon {
-    position: absolute;
-    height: 1.45rem;
-    width: 1.45rem;
-    transition:
-      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 340ms ease,
-      color 320ms ease,
-      filter 340ms ease;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.9);
+    color: #1f2937;
+    box-shadow: 0 8px 20px -10px rgba(15,23,42,0.28);
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease, opacity 180ms ease;
     will-change: transform, opacity;
+    margin: 0 4px;
+  }
+
+  .theme-toggle__icon svg {
+    display: block;
+  }
+
+  .dark .theme-toggle__icon {
+    background: linear-gradient(180deg, rgba(17,24,39,0.9), rgba(20,27,46,0.86));
+    color: #e6eefc;
+    box-shadow: 0 10px 26px -12px rgba(2,6,23,0.6);
   }
 
   .theme-toggle__icon--sun {
     color: #f59e0b;
-    opacity: 0;
-    transform: rotate(-80deg) scale(0.42);
-    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.32));
+    transform: scale(0.9) translateY(2px);
+    opacity: 0.95;
   }
 
   .theme-toggle__icon--moon {
     color: #60a5fa;
-    opacity: 0;
-    transform: rotate(70deg) scale(0.4);
-    filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.28));
+    transform: scale(0.9) translateY(2px) rotate(-6deg);
+    opacity: 0.95;
   }
 
   .theme-toggle__icon.is-active {
+    transform: scale(1.08) translateY(-2px) rotate(0deg);
     opacity: 1;
-    transform: rotate(0deg) scale(1);
+    box-shadow: 0 20px 50px -20px rgba(37,99,235,0.18);
+  }
+
+  .theme-toggle:hover .theme-toggle__icon {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 20px 50px -24px rgba(37,99,235,0.14);
   }
 
   .theme-toggle.is-animating .theme-toggle__burst {
