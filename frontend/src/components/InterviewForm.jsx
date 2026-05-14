@@ -170,7 +170,7 @@ function InterviewForm({ initialValues = defaultValues, onSubmit, onCancel, subm
         />
       </div>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-950/70 dark:text-slate-200">
+      <label className="flex items-center gap-3 rounded-[1.4rem] border border-white/60 bg-white/45 px-4 py-3 text-sm font-medium text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-950/50 dark:text-slate-200">
         <input
           type="checkbox"
           name="completed"

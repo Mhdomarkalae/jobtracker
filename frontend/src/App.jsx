@@ -16,7 +16,8 @@ function AppLayout() {
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-100">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.16),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-[32rem] bg-[radial-gradient(circle_at_top,rgba(92,137,255,0.22),transparent_56%)] dark:bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_54%)]" />
+      <div className="pointer-events-none fixed inset-x-0 top-16 h-[28rem] bg-[radial-gradient(circle_at_center,rgba(110,231,183,0.1),transparent_62%)] dark:bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.14),transparent_62%)]" />
       <Navbar
         user={user}
         onLogout={logout}
@@ -29,7 +30,7 @@ function AppLayout() {
           </div>
         </div>
       ) : null}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Outlet />
       </main>
     </div>
