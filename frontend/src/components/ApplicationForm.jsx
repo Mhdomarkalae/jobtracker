@@ -223,6 +223,10 @@ function ApplicationForm({
         </div>
       </div>
 
+      <div className="rounded-[1.4rem] border border-white/60 bg-white/45 px-4 py-3 text-sm text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm dark:border-slate-800/60 dark:bg-slate-950/45 dark:text-slate-300">
+        Keep company, title, timing, and status accurate here. Interviews and history continue to use the same record and identifiers.
+      </div>
+
       <div>
         <label className="field-label" htmlFor="notes">
           Notes

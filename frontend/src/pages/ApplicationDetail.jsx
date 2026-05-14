@@ -195,13 +195,13 @@ function ApplicationDetail() {
   return (
     <div className="space-y-6">
       <section className="panel overflow-hidden">
-        <div className="border-b border-slate-200/80 bg-slate-950 px-6 py-8 text-white md:px-8 dark:border-slate-800/80 dark:bg-slate-900">
+        <div className="border-b border-white/55 bg-[linear-gradient(135deg,rgba(37,99,235,0.14),rgba(255,255,255,0.55),rgba(125,211,252,0.1))] px-6 py-8 md:px-8 dark:border-slate-800/70 dark:bg-[linear-gradient(135deg,rgba(37,99,235,0.16),rgba(15,23,42,0.7),rgba(99,102,241,0.14))]">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
             <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">Application detail</p>
-              <h1 className="mt-3 text-4xl font-semibold text-white">{application.companyName}</h1>
-              <p className="mt-3 text-lg text-slate-300">{application.positionTitle}</p>
-              <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-300">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600 dark:text-cyan-300">Application detail</p>
+              <h1 className="mt-3 text-4xl font-semibold text-slate-950 dark:text-white">{application.companyName}</h1>
+              <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">{application.positionTitle}</p>
+              <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                 <StatusBadge status={application.currentStatus} />
                 <span>Applied {formatDate(application.dateApplied)}</span>
                 {application.location ? <span>{application.location}</span> : null}
@@ -298,7 +298,7 @@ function ApplicationDetail() {
                   application.interviews.map((interview) => (
                     <div
                       key={interview.id}
-                      className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/70"
+                      className="rounded-[1.4rem] border border-white/70 bg-white/55 px-5 py-5 shadow-[0_18px_44px_-30px_rgba(15,23,42,0.18)] dark:border-slate-800/70 dark:bg-slate-950/55"
                     >
                       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
@@ -341,9 +341,9 @@ function ApplicationDetail() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                  <div className="rounded-[1.4rem] border border-dashed border-white/70 bg-white/45 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/45">
                     <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">No interviews scheduled</p>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Add the next conversation to keep the timeline current.</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Add the next conversation so prep notes and outcomes stay attached to this role.</p>
                   </div>
                 )}
               </div>
@@ -410,7 +410,7 @@ function ApplicationDetail() {
               <div className="mt-6 space-y-4">
                 {application.statusHistory?.length ? (
                   application.statusHistory.map((entry) => (
-                    <div key={entry.id} className="relative rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/70">
+                    <div key={entry.id} className="relative rounded-[1.4rem] border border-white/70 bg-white/55 px-5 py-5 shadow-[0_18px_44px_-30px_rgba(15,23,42,0.18)] dark:border-slate-800/70 dark:bg-slate-950/55">
                       <div className="absolute left-0 top-5 h-8 w-1 rounded-r-full bg-brand-600" />
                       <div className="pl-3">
                         <div className="flex flex-wrap items-center gap-3">
@@ -422,7 +422,7 @@ function ApplicationDetail() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                  <div className="rounded-[1.4rem] border border-dashed border-white/70 bg-white/45 px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-950/45">
                     <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">No status changes yet</p>
                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                       The first update you make will automatically appear here.

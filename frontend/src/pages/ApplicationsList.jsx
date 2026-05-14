@@ -82,7 +82,7 @@ function ApplicationsList() {
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Pipeline view</p>
             <h1 className="mt-3 text-4xl font-semibold">Applications</h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400">
-              Filter by stage, scan the full pipeline, and jump directly into the roles that need attention.
+              Filter by stage, scan the full pipeline, and move straight into the roles that need attention next.
             </p>
           </div>
 
@@ -90,7 +90,7 @@ function ApplicationsList() {
             <select
               value={selectedStatus}
               onChange={(event) => setSelectedStatus(event.target.value)}
-              className="field-input min-w-[180px]"
+              className="field-input min-w-[210px]"
             >
               <option value="ALL">All statuses</option>
               {APPLICATION_STATUS_OPTIONS.map((status) => (
@@ -124,13 +124,13 @@ function ApplicationsList() {
         </div>
       ) : applications.length === 0 ? (
         <div className="panel px-6 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-white/80 shadow-[0_20px_44px_-28px_rgba(15,23,42,0.18)] dark:bg-slate-900/70">
             <svg className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
           <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{emptyMessage}</p>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Use the add button to create and track your next opportunity.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Once you save a role, this view becomes the working queue for follow-ups, interviews, and deletions.</p>
           <Link to="/applications/new" className="button-primary mt-6">
             Add Application
           </Link>
@@ -154,7 +154,7 @@ function ApplicationsList() {
                     navigate(`/applications/${application.id}`)
                   }
                 }}
-                className="panel w-full cursor-pointer p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="panel w-full cursor-pointer p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_28px_64px_-36px_rgba(37,99,235,0.22)]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
@@ -190,8 +190,8 @@ function ApplicationsList() {
 
           <div className="panel hidden overflow-hidden md:block">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                <thead className="bg-slate-50/80 dark:bg-slate-900/80">
+              <table className="min-w-full divide-y divide-slate-200/70 dark:divide-slate-700">
+                <thead className="bg-white/55 dark:bg-slate-950/55">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       Company
@@ -217,7 +217,7 @@ function ApplicationsList() {
                   {applications.map((application) => (
                     <tr
                       key={application.id}
-                      className="cursor-pointer bg-white transition-all duration-200 hover:bg-brand-50/50 dark:bg-slate-900 dark:hover:bg-brand-500/10"
+                      className="cursor-pointer bg-transparent transition-all duration-200 hover:bg-brand-50/50 dark:hover:bg-brand-500/10"
                       onClick={() => navigate(`/applications/${application.id}`)}
                     >
                       <td className="px-6 py-5">

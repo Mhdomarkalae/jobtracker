@@ -5,7 +5,7 @@ function StatusBadge({ status }) {
 
   return (
     <span
-      className={`status-badge ${meta.badgeClassName}`}
+      className={`status-badge shadow-[inset_0_1px_0_rgba(255,255,255,0.38)] backdrop-blur-sm ${meta.badgeClassName}`}
     >
       <span 
         className="h-1.5 w-1.5 rounded-full" 

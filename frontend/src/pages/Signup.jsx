@@ -83,7 +83,7 @@ function Signup() {
       <div className="grid w-full gap-8 lg:grid-cols-[1.05fr,0.95fr]">
         <section className="panel overflow-hidden p-8 md:p-10">
           <div className="mb-8">
-            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-lg font-bold text-white shadow-lg shadow-brand-500/25">
+            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-[1.4rem] bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-lg font-bold text-white shadow-lg shadow-brand-500/25">
               JT
             </div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Job Tracker</p>
@@ -128,7 +128,7 @@ function Signup() {
             </div>
           ) : null}
           
-          <div className="rounded-2xl bg-gradient-to-r from-brand-500/10 to-purple-500/10 p-5 dark:from-brand-500/20 dark:to-purple-500/20">
+          <div className="rounded-[1.6rem] border border-white/60 bg-gradient-to-r from-brand-500/10 to-indigo-500/10 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] dark:border-slate-800/60 dark:from-brand-500/20 dark:to-indigo-500/20">
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">What you get:</p>
             <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
               <li className="flex items-center gap-2">

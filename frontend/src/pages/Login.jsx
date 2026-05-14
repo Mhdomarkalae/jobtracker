@@ -79,7 +79,7 @@ function Login() {
       <div className="grid w-full gap-8 lg:grid-cols-[1.05fr,0.95fr]">
         <section className="panel overflow-hidden p-8 md:p-10">
           <div className="mb-8">
-            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-lg font-bold text-white shadow-lg shadow-brand-500/25">
+            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-[1.4rem] bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-lg font-bold text-white shadow-lg shadow-brand-500/25">
               JT
             </div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">Job Tracker</p>
