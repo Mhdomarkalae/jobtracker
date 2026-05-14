@@ -1,94 +1,101 @@
-import { useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
-function SunIcon({ className }) {
+function SunGlyph({ className }) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
+      aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      <circle cx="16" cy="16" r="5.5" stroke="currentColor" strokeWidth="2.1" />
+      <path d="M16 2.75V6.25" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M16 25.75V29.25" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M2.75 16H6.25" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M25.75 16H29.25" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M6.62 6.62L9.1 9.1" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M22.9 22.9L25.38 25.38" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M6.62 25.38L9.1 22.9" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M22.9 9.1L25.38 6.62" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
     </svg>
   )
 }
 
-function MoonIcon({ className }) {
+function MoonGlyph({ className, maskId }) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
+      aria-hidden="true"
     >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      <defs>
+        <mask id={maskId}>
+          <rect width="32" height="32" fill="white" />
+          <circle cx="21.5" cy="12.5" r="8.5" fill="black" />
+        </mask>
+      </defs>
+      <circle cx="16" cy="16" r="9" stroke="currentColor" strokeWidth="2.1" mask={`url(#${maskId})`} />
+      <circle cx="11.6" cy="12.4" r="1.1" fill="currentColor" opacity="0.55" />
+      <circle cx="14.8" cy="18.8" r="1.35" fill="currentColor" opacity="0.4" />
+      <circle cx="18.4" cy="15.2" r="0.9" fill="currentColor" opacity="0.45" />
     </svg>
   )
 }
 
-export default function ThemeToggle({ theme, onToggle }) {
+export default function ThemeToggle() {
+  const { theme, isDark, toggleTheme } = useTheme()
   const [isAnimating, setIsAnimating] = useState(false)
+  const timeoutRef = useRef(null)
+  const maskId = useId().replace(/:/g, '')
 
-  function handleClick() {
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  function handleToggle() {
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current)
+    }
+
     setIsAnimating(true)
-    onToggle()
-    setTimeout(() => setIsAnimating(false), 400)
+    toggleTheme()
+
+    timeoutRef.current = window.setTimeout(() => {
+      setIsAnimating(false)
+      timeoutRef.current = null
+    }, 720)
   }
 
   return (
     <button
       type="button"
-      onClick={handleClick}
-      className={`
-        theme-toggle group relative overflow-hidden
-        ${isAnimating ? 'scale-110' : 'scale-100'}
-      `}
-      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      onClick={handleToggle}
+      className={`theme-toggle ${isAnimating ? 'is-animating' : ''}`}
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      aria-pressed={isDark}
+      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      <div className="relative h-5 w-5">
-        <div
-          className={`
-            absolute inset-0 flex items-center justify-center
-            transition-all duration-300
-            ${theme === 'dark' ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'}
-          `}
-        >
-          <SunIcon className="h-5 w-5 text-amber-500" />
-        </div>
-        <div
-          className={`
-            absolute inset-0 flex items-center justify-center
-            transition-all duration-300
-            ${theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}
-          `}
-        >
-          <MoonIcon className="h-5 w-5 text-blue-400" />
-        </div>
-      </div>
-      
-      <div
-        className={`
-          absolute inset-0 rounded-xl bg-gradient-to-br from-amber-400/20 to-blue-500/20
-          opacity-0 transition-opacity duration-300
-          group-hover:opacity-100
-        `}
-      />
+      <span className="theme-toggle__backdrop" />
+      <span className="theme-toggle__burst" />
+      <span className="theme-toggle__orbit" />
+
+      <span className="theme-toggle__icon-wrap">
+        <MoonGlyph
+          maskId={`theme-toggle-moon-${maskId}`}
+          className={`theme-toggle__icon theme-toggle__icon--moon ${isDark ? 'is-active' : ''}`}
+        />
+        <SunGlyph
+          className={`theme-toggle__icon theme-toggle__icon--sun ${isDark ? '' : 'is-active'}`}
+        />
+      </span>
     </button>
   )
 }
