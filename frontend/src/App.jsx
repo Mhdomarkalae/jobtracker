@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import SiteFooter from './components/SiteFooter'
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
@@ -9,13 +10,14 @@ import ApplicationsList from './pages/ApplicationsList'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import NewApplication from './pages/NewApplication'
+import Privacy from './pages/Privacy'
 import Signup from './pages/Signup'
 
 function AppLayout() {
   const { isDemoMode, logout, user } = useAuth()
 
   return (
-    <div className="min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="flex min-h-screen flex-col text-slate-900 dark:text-slate-100">
       <Navbar
         user={user}
         onLogout={logout}
@@ -28,9 +30,10 @@ function AppLayout() {
           </div>
         </div>
       ) : null}
-      <main className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="relative mx-auto max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <Outlet />
       </main>
+      <SiteFooter />
     </div>
   )
 }
@@ -41,6 +44,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/privacy" element={<Privacy />} />
             <Route element={<GuestRoute />}>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

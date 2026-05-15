@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import SiteFooter from '../components/SiteFooter'
 import { useAuth } from '../hooks/useAuth'
 import { checkBackendAvailability } from '../services/api'
 
@@ -79,8 +80,9 @@ function Signup() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl items-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="grid w-full gap-8 lg:grid-cols-[1.05fr,0.95fr]">
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid w-full gap-8 lg:grid-cols-[1.05fr,0.95fr]">
         <section className="panel overflow-hidden p-6 md:p-8">
           <div className="mb-8">
             <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#e2e4e9] bg-white text-sm font-semibold text-slate-800 dark:border-[#1e2029] dark:bg-[#111318] dark:text-slate-200">
@@ -258,6 +260,8 @@ function Signup() {
           </form>
         </section>
       </div>
+      </div>
+      <SiteFooter />
     </div>
   )
 }
