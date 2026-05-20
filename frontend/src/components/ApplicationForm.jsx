@@ -41,6 +41,17 @@ function validate(values) {
     nextErrors.salary = 'Salary cannot be negative.'
   }
 
+  if (values.jobUrl.trim()) {
+    try {
+      const url = new URL(values.jobUrl.trim())
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        nextErrors.jobUrl = 'Job URL must start with http:// or https://.'
+      }
+    } catch {
+      nextErrors.jobUrl = 'Job URL must be a valid http:// or https:// URL.'
+    }
+  }
+
   return nextErrors
 }
 
@@ -154,6 +165,7 @@ function ApplicationForm({
             onChange={handleChange}
             placeholder="https://example.com/job"
           />
+          {errors.jobUrl ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-300">{errors.jobUrl}</p> : null}
         </div>
 
         <div>

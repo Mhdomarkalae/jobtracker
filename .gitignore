@@ -47,13 +47,25 @@ frontend/node_modules/
 
 # Environment - NEVER COMMIT SENSITIVE FILES
 .env
+.env.development
+.env.production
+.env.test
 .env.local
 .env.*.local
 !.env.example
 frontend/.env
+frontend/.env.development
+frontend/.env.production
+frontend/.env.test
 frontend/.env.local
 frontend/.env.*.local
 !frontend/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
 
 # Local tools
 .tools/

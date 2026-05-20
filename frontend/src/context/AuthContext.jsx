@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react'
 import {
   checkBackendAvailability,
-  clearStoredAuthToken,
   disableDemoSession,
   enableDemoSession,
   getApiErrorMessage,
   getCurrentUser,
-  getStoredAuthToken,
   isDemoFallbackEnabled,
   isDemoSessionEnabled,
   login as loginRequest,
-  setStoredAuthToken,
+  logout as logoutRequest,
   signup as signupRequest,
 } from '../services/api'
 import { AuthContext } from './auth-context'
@@ -38,22 +36,6 @@ export function AuthProvider({ children }) {
         return
       }
 
-      if (!getStoredAuthToken()) {
-        if (isDemoFallbackEnabled()) {
-          // On free hosting the backend may sleep. When that happens, the
-          // frontend can still present a working demo using local sample data.
-          const backendAvailable = await checkBackendAvailability()
-          if (!backendAvailable && isMounted) {
-            enableDemoSession()
-            setUser(getDemoUser())
-            setIsDemoMode(true)
-          }
-        }
-
-        setIsInitializing(false)
-        return
-      }
-
       try {
         const currentUser = await getCurrentUser()
         if (isMounted) {
@@ -61,7 +43,6 @@ export function AuthProvider({ children }) {
           setIsDemoMode(false)
         }
       } catch (error) {
-        clearStoredAuthToken()
         if (isDemoFallbackEnabled()) {
           // Only fall back to demo mode when the backend is unavailable.
           // Real auth failures should still behave like normal sign-out.
@@ -97,23 +78,25 @@ export function AuthProvider({ children }) {
     // Real auth should always clear demo mode first.
     disableDemoSession()
     const response = await signupRequest(credentials)
-    setStoredAuthToken(response.token)
-    setUser(response.user)
+    setUser(null)
     setIsDemoMode(false)
-    return response.user
+    return response
   }
 
   async function login(credentials) {
     disableDemoSession()
     const response = await loginRequest(credentials)
-    setStoredAuthToken(response.token)
     setUser(response.user)
     setIsDemoMode(false)
     return response.user
   }
 
-  function logout() {
-    clearStoredAuthToken()
+  async function logout() {
+    try {
+      await logoutRequest()
+    } catch (error) {
+      console.error(error)
+    }
     disableDemoSession()
     setUser(null)
     setIsDemoMode(false)
@@ -122,7 +105,6 @@ export function AuthProvider({ children }) {
   function continueWithDemo() {
     // Explicit "show me the portfolio demo" action from the auth screens.
     enableDemoSession()
-    clearStoredAuthToken()
     setUser(getDemoUser())
     setIsDemoMode(true)
   }

@@ -1,6 +1,7 @@
 package com.omar.jobtracker.config;
 
 import com.omar.jobtracker.security.JwtAuthenticationFilter;
+import com.omar.jobtracker.security.RateLimitingFilter;
 import com.omar.jobtracker.security.RestAccessDeniedHandler;
 import com.omar.jobtracker.security.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -36,17 +39,40 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitingFilter rateLimitingFilter;
     private final UserDetailsService userDetailsService;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
     private final RestAccessDeniedHandler accessDeniedHandler;
+    private final AppSecurityProperties securityProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // The API is consumed by a separate React app, so sessions and CSRF
         // cookies are intentionally disabled in favor of bearer tokens.
+        CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setCookieName(securityProperties.csrfCookieName());
+        csrfTokenRepository.setHeaderName(securityProperties.csrfHeaderName());
+        csrfTokenRepository.setCookieCustomizer(builder -> builder
+                .sameSite("Strict")
+                .secure(securityProperties.cookieSecure())
+                .path(securityProperties.sessionCookiePath()));
+
+        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName("_csrf");
+
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfTokenRepository)
+                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                        .ignoringRequestMatchers("/api/health")
+                )
                 .cors(Customizer.withDefaults())
+                .headers(headers -> headers
+                        .contentTypeOptions(Customizer.withDefaults())
+                        .frameOptions(frameOptions -> frameOptions.deny())
+                        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                        .referrerPolicy(referrerPolicy -> referrerPolicy.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Browser preflight requests must pass before auth.
@@ -54,7 +80,7 @@ public class SecurityConfig {
                         // Health stays public so Render can probe the service.
                         .requestMatchers("/api/health").permitAll()
                         // Auth endpoints are the only public write endpoints.
-                        .requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/csrf").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -63,7 +89,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(rateLimitingFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

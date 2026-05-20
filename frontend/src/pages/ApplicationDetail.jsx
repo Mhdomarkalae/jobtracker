@@ -24,6 +24,19 @@ import {
 } from '../utils/formatters'
 import { APPLICATION_STATUS_OPTIONS } from '../utils/options'
 
+function isSafeExternalUrl(value) {
+  if (!value) {
+    return false
+  }
+
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol)
+  } catch {
+    return false
+  }
+}
+
 function ApplicationDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -251,8 +264,13 @@ function ApplicationDetail() {
                 <div>
                   <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">Job URL</dt>
                   <dd className="mt-1 text-base text-slate-900 dark:text-slate-100">
-                    {application.jobUrl ? (
-                      <a href={application.jobUrl} target="_blank" rel="noreferrer" className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:text-slate-100">
+                    {isSafeExternalUrl(application.jobUrl) ? (
+                      <a
+                        href={application.jobUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:text-slate-100"
+                      >
                         Open listing
                       </a>
                     ) : (

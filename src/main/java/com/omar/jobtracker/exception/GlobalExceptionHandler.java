@@ -74,6 +74,13 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ErrorResponse handleTooManyRequests(TooManyRequestsException exception) {
+        return buildErrorResponse(exception.getMessage(), HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleUnhandled(Exception exception) {

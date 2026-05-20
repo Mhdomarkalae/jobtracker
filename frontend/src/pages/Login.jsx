@@ -10,7 +10,7 @@ function Login() {
   const { canUseDemoFallback, continueWithDemo, login, getAuthErrorMessage } = useAuth()
   const [formValues, setFormValues] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
-  const [submitError, setSubmitError] = useState('')
+  const [submitError, setSubmitError] = useState(location.state?.notice ?? '')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [backendUnavailable, setBackendUnavailable] = useState(false)
 

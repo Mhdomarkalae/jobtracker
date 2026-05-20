@@ -19,6 +19,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final AuthCookieService authCookieService;
 
     @Override
     protected void doFilterInternal(
@@ -26,13 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        String token = authCookieService.resolveToken(request);
+        if (token == null || token.isBlank()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorizationHeader.substring(7);
         String username;
         try {
             username = jwtService.extractUsername(token);

@@ -17,41 +17,32 @@ import {
 
 // Browser-side API client.
 //
-// Connects to Spring Boot backend on port 8080
-// In demo mode it swaps to a localStorage-backed in-browser store
-const AUTH_TOKEN_STORAGE_KEY = 'job-tracker-auth-token'
+// Connects to Spring Boot backend on port 8080.
+// In demo mode it swaps to a localStorage-backed in-browser store.
 const DEMO_MODE_STORAGE_KEY = 'job-tracker-demo-mode'
-const demoFallbackEnabled = import.meta.env.VITE_API_BASE_URL !== 'false'
+const CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+const CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_MODE === 'true'
+let csrfRequestPromise = null
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-export function getStoredAuthToken() {
+function getCookie(name) {
   if (typeof window === 'undefined') {
     return ''
   }
 
-  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) ?? ''
-}
+  const match = window.document.cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith(`${name}=`))
 
-export function setStoredAuthToken(token) {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token)
-}
-
-export function clearStoredAuthToken() {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY)
+  return match ? decodeURIComponent(match.split('=').slice(1).join('=')) : ''
 }
 
 export function isDemoFallbackEnabled() {
@@ -87,15 +78,42 @@ function shouldUseDemoFallback(error) {
       return false
     }
 
-    // Network errors do not have an HTTP response. That is the signal that
-    // the backend is unreachable rather than simply returning an application error.
-    return !error?.response
+	    // Network errors do not have an HTTP response. That is the signal that
+	    // the backend is unreachable rather than simply returning an application error.
+	    return !error?.response
 }
 
-api.interceptors.request.use((config) => {
-  const token = getStoredAuthToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+async function ensureCsrfToken() {
+  if (isDemoSessionEnabled()) {
+    return ''
+  }
+
+  const existingToken = getCookie(CSRF_COOKIE_NAME)
+  if (existingToken) {
+    return existingToken
+  }
+
+  if (!csrfRequestPromise) {
+    csrfRequestPromise = api
+      .get('/auth/csrf')
+      .then(({ data }) => data?.token ?? '')
+      .finally(() => {
+        csrfRequestPromise = null
+      })
+  }
+
+  return csrfRequestPromise
+}
+
+api.interceptors.request.use(async (config) => {
+  const method = (config.method ?? 'get').toLowerCase()
+  if (!['post', 'put', 'patch', 'delete'].includes(method)) {
+    return config
+  }
+
+  const csrfToken = getCookie(CSRF_COOKIE_NAME) || (await ensureCsrfToken())
+  if (csrfToken) {
+    config.headers[CSRF_HEADER_NAME] = csrfToken
   }
 
   return config
@@ -107,8 +125,6 @@ api.interceptors.response.use(
     // A real 401 should return the user to the login page, but demo mode must
     // not redirect away from the recruiter demo.
     if (error?.response?.status === 401 && !isDemoSessionEnabled()) {
-      clearStoredAuthToken()
-
       if (
         typeof window !== 'undefined' &&
         window.location.pathname !== '/login' &&
@@ -137,13 +153,25 @@ export async function checkBackendAvailability() {
 }
 
 export async function signup(payload) {
+  await ensureCsrfToken()
   const { data } = await api.post('/auth/signup', payload)
   return data
 }
 
 export async function login(payload) {
+  await ensureCsrfToken()
   const { data } = await api.post('/auth/login', payload)
   return data
+}
+
+export async function logout() {
+  if (isDemoSessionEnabled()) {
+    disableDemoSession()
+    return
+  }
+
+  await ensureCsrfToken()
+  await api.post('/auth/logout')
 }
 
 export async function getCurrentUser() {
@@ -182,7 +210,6 @@ export async function getApplications(status, { page = 0, size = 50 } = {}) {
       // Once the app decides the backend is unavailable, it stays in demo mode
       // for the rest of the session until the user explicitly logs in again.
       enableDemoSession()
-      clearStoredAuthToken()
       const items = listDemoApplications(status)
       return {
         content: items,
@@ -208,7 +235,6 @@ export async function getApplication(id) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return getDemoApplication(id)
     }
     throw error
@@ -226,7 +252,6 @@ export async function createApplication(payload) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return createDemoApplication(payload)
     }
     throw error
@@ -244,7 +269,6 @@ export async function updateApplication(id, payload) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return updateDemoApplication(id, payload)
     }
     throw error
@@ -262,7 +286,6 @@ export async function deleteApplication(id) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       deleteDemoApplication(id)
       return
     }
@@ -281,12 +304,11 @@ export async function updateApplicationStatus(id, status, notes) {
   }
 
   try {
-    const { data } = await api.patch(`/jobs/${id}`, payload)
+    const { data } = await api.patch(`/jobs/${id}/status`, payload)
     return data
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return updateDemoApplicationStatus(id, status, notes)
     }
     throw error
@@ -304,7 +326,6 @@ export async function getInterviews(applicationId) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return listDemoInterviews(applicationId)
     }
     throw error
@@ -322,7 +343,6 @@ export async function createInterview(applicationId, payload) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return createDemoInterview(applicationId, payload)
     }
     throw error
@@ -340,7 +360,6 @@ export async function updateInterview(id, payload) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return updateDemoInterview(id, payload)
     }
     throw error
@@ -358,7 +377,6 @@ export async function deleteInterview(id) {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       deleteDemoInterview(id)
       return
     }
@@ -377,7 +395,6 @@ export async function getAnalyticsSummary() {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return getDemoAnalyticsSummary()
     }
     throw error
@@ -397,7 +414,6 @@ export async function getAnalyticsTimeline(groupBy = 'week') {
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       enableDemoSession()
-      clearStoredAuthToken()
       return getDemoAnalyticsTimeline(groupBy)
     }
     throw error

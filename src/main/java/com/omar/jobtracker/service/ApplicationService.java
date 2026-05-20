@@ -53,12 +53,12 @@ public class ApplicationService {
         Application application = Application.builder()
                 .companyName(TextSanitizer.stripHtmlTags(request.getCompanyName()))
                 .positionTitle(TextSanitizer.stripHtmlTags(request.getPositionTitle()))
-                .jobUrl(request.getJobUrl())
+                .jobUrl(request.getJobUrl() == null ? null : request.getJobUrl().trim())
                 .dateApplied(request.getDateApplied())
                 .currentStatus(request.getCurrentStatus())
                 .salary(request.getSalary())
-                .location(request.getLocation())
-                .notes(request.getNotes())
+                .location(TextSanitizer.stripHtmlTags(request.getLocation()))
+                .notes(TextSanitizer.stripHtmlTags(request.getNotes()))
                 .user(currentUserService.getCurrentUserEntity())
                 .build();
 
@@ -90,12 +90,12 @@ public class ApplicationService {
 
         application.setCompanyName(TextSanitizer.stripHtmlTags(request.getCompanyName()));
         application.setPositionTitle(TextSanitizer.stripHtmlTags(request.getPositionTitle()));
-        application.setJobUrl(request.getJobUrl());
+        application.setJobUrl(request.getJobUrl() == null ? null : request.getJobUrl().trim());
         application.setDateApplied(request.getDateApplied());
         application.setCurrentStatus(request.getCurrentStatus());
         application.setSalary(request.getSalary());
-        application.setLocation(request.getLocation());
-        application.setNotes(request.getNotes());
+        application.setLocation(TextSanitizer.stripHtmlTags(request.getLocation()));
+        application.setNotes(TextSanitizer.stripHtmlTags(request.getNotes()));
 
         if (previousStatus != request.getCurrentStatus()) {
             // Full updates can still change status, so we keep history in sync
@@ -121,7 +121,7 @@ public class ApplicationService {
             // This is the dedicated "advance the application" flow used by the
             // detail page. It updates the current status and records when it changed.
             application.setCurrentStatus(request.getStatus());
-            application.addStatusHistory(buildStatusHistory(request.getStatus(), request.getNotes()));
+            application.addStatusHistory(buildStatusHistory(request.getStatus(), TextSanitizer.stripHtmlTags(request.getNotes())));
         }
 
         Application savedApplication = applicationRepository.save(application);
@@ -207,7 +207,7 @@ public class ApplicationService {
     private StatusHistory buildStatusHistory(ApplicationStatus status, String notes) {
         return StatusHistory.builder()
                 .status(status)
-                .notes(notes)
+                .notes(TextSanitizer.stripHtmlTags(notes))
                 .build();
     }
 

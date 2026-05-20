@@ -18,6 +18,9 @@ public final class TextSanitizer {
         if (value == null || value.isEmpty()) {
             return value;
         }
-        return HTML_TAG.matcher(value).replaceAll("").trim();
+        return HTML_TAG.matcher(value)
+                .replaceAll("")
+                .replace('\u0000', ' ')
+                .trim();
     }
 }

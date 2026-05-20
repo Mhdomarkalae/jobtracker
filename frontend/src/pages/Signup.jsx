@@ -27,6 +27,7 @@ function Signup() {
 
   function validate() {
     const nextErrors = {}
+    const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/
 
     if (!formValues.email.trim()) {
       nextErrors.email = 'Email is required.'
@@ -34,8 +35,10 @@ function Signup() {
 
     if (!formValues.password) {
       nextErrors.password = 'Password is required.'
-    } else if (formValues.password.length < 8) {
-      nextErrors.password = 'Password must be at least 8 characters.'
+    } else if (formValues.password.length < 12) {
+      nextErrors.password = 'Password must be at least 12 characters.'
+    } else if (!strongPasswordPattern.test(formValues.password)) {
+      nextErrors.password = 'Password must include upper, lower, number, and special character.'
     }
 
     if (formValues.confirmPassword !== formValues.password) {
@@ -70,7 +73,10 @@ function Signup() {
         email: formValues.email.trim(),
         password: formValues.password,
       })
-      navigate('/', { replace: true })
+      navigate('/login', {
+        replace: true,
+        state: { notice: 'If the email is eligible, the account is ready for sign-in.' },
+      })
     } catch (error) {
       console.error(error)
       setSubmitError(getAuthErrorMessage(error, 'Unable to create the account.'))
@@ -197,15 +203,15 @@ function Signup() {
               <label className="field-label" htmlFor="password">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                className="field-input"
-                value={formValues.password}
-                onChange={handleChange}
-                placeholder="At least 8 characters"
-              />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="field-input"
+                  value={formValues.password}
+                  onChange={handleChange}
+                  placeholder="At least 12 characters"
+                />
               {errors.password ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.password}</p> : null}
             </div>
 

@@ -38,6 +38,10 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Builder.Default
+    @Column(name = "token_version", nullable = false)
+    private Integer tokenVersion = 0;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

@@ -7,6 +7,7 @@ import com.omar.jobtracker.model.Application;
 import com.omar.jobtracker.model.Interview;
 import com.omar.jobtracker.repository.ApplicationRepository;
 import com.omar.jobtracker.repository.InterviewRepository;
+import com.omar.jobtracker.util.TextSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,8 @@ public class InterviewService {
                 .application(application)
                 .interviewType(request.getInterviewType())
                 .scheduledDate(request.getScheduledDate())
-                .interviewerName(request.getInterviewerName())
-                .notes(request.getNotes())
+                .interviewerName(TextSanitizer.stripHtmlTags(request.getInterviewerName()))
+                .notes(TextSanitizer.stripHtmlTags(request.getNotes()))
                 .durationMinutes(request.getDurationMinutes())
                 .completed(Boolean.TRUE.equals(request.getCompleted()))
                 .build();
@@ -60,8 +61,8 @@ public class InterviewService {
 
         interview.setInterviewType(request.getInterviewType());
         interview.setScheduledDate(request.getScheduledDate());
-        interview.setInterviewerName(request.getInterviewerName());
-        interview.setNotes(request.getNotes());
+        interview.setInterviewerName(TextSanitizer.stripHtmlTags(request.getInterviewerName()));
+        interview.setNotes(TextSanitizer.stripHtmlTags(request.getNotes()));
         interview.setDurationMinutes(request.getDurationMinutes());
         interview.setCompleted(Boolean.TRUE.equals(request.getCompleted()));
 
