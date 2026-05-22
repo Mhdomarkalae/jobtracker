@@ -1,117 +1,165 @@
 # Job Tracker
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://www.java.com/)
-[![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
+A full-stack web application for tracking job applications, interviews, and search analytics. Built with a Spring Boot REST API, a React single-page frontend, and a PostgreSQL database, with JWT-based authentication and per-user data isolation.
 
-> [Live Demo](https://jobtracker.vercel.app) &mdash; Explore the app with built-in demo mode (no login required).
-
-A full-stack web application for tracking job applications throughout the hiring process. Built with Spring Boot and React, featuring real-time analytics, interview scheduling, and an animated dark/light theme.
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 18, Vite, Tailwind CSS |
-| Backend | Spring Boot 3, Spring Security, JPA/Hibernate |
-| Database | PostgreSQL (Supabase) |
-| Authentication | JWT, BCrypt |
-| Deployment | Render (API), Vercel (frontend) |
+**Live demo:** _add your Vercel URL_ &nbsp;·&nbsp; **API:** _add your Render URL_
 
 ## Features
 
-- **Application Management** &mdash; Track job applications with company, position, salary, and status
-- **Interview Scheduling** &mdash; Schedule and manage interview rounds for each application
-- **Status Tracking** &mdash; Visual timeline of application status changes
-- **Analytics Dashboard** &mdash; Real-time pipeline metrics and submission trends
-- **Dark/Light Mode** &mdash; Animated theme switching for comfortable viewing
-- **User Authentication** &mdash; Secure account system with JWT tokens
-- **Demo Mode** &mdash; Explore all features instantly with preloaded sample data
+- Email/password authentication with JWT (24-hour expiry) and BCrypt password hashing
+- Full CRUD for job applications with status tracking (applied, interviewing, offer, rejected, etc.)
+- Interview scheduling and notes linked to each application
+- Analytics: application summary stats and a timeline view
+- Per-user data isolation — every record is scoped to the authenticated user
+- Input validation on all write endpoints
+
+## Tech Stack
+
+**Backend**
+- Java 17, Spring Boot 3
+- Spring Web (REST), Spring Data JPA / Hibernate
+- Spring Security + JWT (jjwt) for auth, BCrypt for password hashing
+- PostgreSQL (Supabase) in production, H2 in tests
+- Maven
+
+**Frontend**
+- React 18, Vite
+- Tailwind CSS
+- React Router, Axios
+
+**Infrastructure**
+- Backend deployed on Render (Docker)
+- Frontend deployed on Vercel
+- Database hosted on Supabase (managed PostgreSQL with connection pooling)
+- CI: GitHub Actions runs the build and test suite on every pull request
+- Dependabot enabled for dependency and security updates
+
+## Architecture
+
+The backend follows a standard layered architecture:
+
+```
+Request → JWT filter → Controller → Service → Repository → PostgreSQL
+```
+
+- A JWT authentication filter validates the Bearer token on every protected request and populates the security context.
+- Controllers handle HTTP concerns and delegate to services.
+- Services hold the business logic and enforce that users only access their own records.
+- Spring Data JPA repositories handle persistence.
+
+**Data model:** a `User` owns many `Job`s; each `Job` has many `Interview`s. The analytics endpoints aggregate a user's jobs into summary and timeline views.
+
+## API
+
+Base URL: `/api`
+
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/auth/signup` | Create an account |
+| `POST` | `/auth/login` | Log in, returns a JWT |
+| `GET` | `/auth/me` | Current user (protected) |
+
+### Jobs (require Bearer token)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/jobs` | List the user's jobs |
+| `POST` | `/jobs` | Create a job |
+| `PUT` | `/jobs/{id}` | Update a job |
+| `PATCH` | `/jobs/{id}/status` | Update status |
+| `DELETE` | `/jobs/{id}` | Delete a job |
+
+### Interviews (require Bearer token)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/jobs/{id}/interviews` | List interviews for a job |
+| `POST` | `/jobs/{id}/interviews` | Add an interview |
+| `PUT` | `/interviews/{id}` | Update an interview |
+| `DELETE` | `/interviews/{id}` | Delete an interview |
+
+### Analytics (require Bearer token)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/analytics/summary` | Summary statistics |
+| `GET` | `/analytics/timeline` | Timeline data |
 
 ## Getting Started
 
 ### Prerequisites
-
 - Java 17+
+- Maven (or use the included `./mvnw` wrapper)
 - Node.js 20+
-- PostgreSQL database (local or Supabase)
+- A PostgreSQL database (a free Supabase project works)
 
-### Backend Setup
+### 1. Configure environment
 
-```bash
-# Configure environment
-cp .env.example .env
-# Edit .env with your database credentials
+Set the following as environment variables (or in a local `.env` that is **not** committed):
 
-# Start backend
+```
+DATABASE_URL=jdbc:postgresql://<host>:5432/postgres?sslmode=require
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=<your-db-password>
+JWT_SECRET=<base64-encoded 256-bit secret>
+JWT_EXPIRATION_MS=86400000
+APP_ALLOWED_ORIGIN_PATTERNS=http://localhost:5173
+```
+
+Generate a JWT secret with:
+
+```
+openssl rand -base64 32
+```
+
+### 2. Run the backend
+
+```
 ./mvnw spring-boot:run
 ```
 
-API runs at `http://localhost:8080/api`
+The API starts at `http://localhost:8080/api`. Wait for the log line `Started JobTrackerApplication`.
 
-### Frontend Setup
+### 3. Run the frontend
 
-```bash
+```
 cd frontend
-cp .env.example .env
-# Edit .env if you need a custom API URL
-
 npm install
 npm run dev
 ```
 
-App runs at `http://localhost:5173`
-
-> **Note:** When the backend is unreachable, the frontend automatically falls back to a fully functional demo mode using browser-local data. No database required to explore the UI.
+Open `http://localhost:5173`.
 
 ## Environment Variables
 
-Configure the following in your `.env` file (root directory):
+| Variable | Description | Example |
+|---|---|---|
+| `DATABASE_URL` | JDBC Postgres connection string | `jdbc:postgresql://...` |
+| `DATABASE_USERNAME` | Database user | `postgres` |
+| `DATABASE_PASSWORD` | Database password | _(secret)_ |
+| `JWT_SECRET` | Base64-encoded 256-bit signing key | output of `openssl rand -base64 32` |
+| `JWT_EXPIRATION_MS` | Token lifetime in milliseconds | `86400000` (24h) |
+| `APP_ALLOWED_ORIGIN_PATTERNS` | Allowed CORS origins | `https://your-app.vercel.app` |
+| `APP_COOKIE_SECURE` | Send cookies over HTTPS only | `true` in production |
+| `APP_TRUST_X_FORWARDED_FOR` | Honor `X-Forwarded-For` header (only behind a trusted proxy) | `true` on Render |
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL JDBC connection URL |
-| `DATABASE_USERNAME` | Database username |
-| `DATABASE_PASSWORD` | Database password |
-| `JWT_SECRET` | Secret key for signing JWT tokens |
-| `JWT_EXPIRATION_MS` | JWT token lifetime in milliseconds |
-| `APP_ALLOWED_ORIGIN_PATTERNS` | Allowed CORS origin patterns |
-
-## Project Structure
+## Testing
 
 ```
-jobtracker/
-├── src/main/java/         # Spring Boot backend
-├── src/main/resources/    # Backend configuration
-├── src/test/              # Backend tests
-├── frontend/              # React frontend
-│   ├── src/
-│   │   ├── pages/         # Page components
-│   │   ├── components/    # Reusable UI components
-│   │   ├── services/      # API client and demo store
-│   │   ├── context/       # React context providers
-│   │   └── demo/          # Demo mode data store
-│   └── ...
-├── .env.example           # Environment variable template
-├── Dockerfile             # Container build
-├── render.yaml            # Render deployment config
-└── start-backend.sh       # Convenience script to run backend
+./mvnw test                    # backend unit/integration tests (H2)
+cd frontend && npm run build   # verify the frontend builds
 ```
+
+## Deployment
+
+- **Backend (Render):** builds from the `Dockerfile`; configuration lives in `render.yaml`. Set every environment variable above in the Render dashboard. Pushing to `main` triggers an automatic redeploy.
+- **Frontend (Vercel):** deploy the `frontend/` directory and point its API base URL at the Render backend.
+- **Database (Supabase):** managed PostgreSQL.
 
 ## Security
 
-- JWT-based authentication with configurable expiration (app.jwt.expiration-ms)
+- JWT authentication with 24-hour expiry
 - BCrypt password hashing
-- User data isolation (each user sees only their own data)
-- Input validation on all endpoints (Bean Validation + SafeHttpUrl + server-side sanitization)
-- CORS restricted to configured origin patterns (app.cors.allowed-origin-patterns)
-- CSRF protection for cookie-based endpoints; XSRF token endpoint provided for SPAs
-- Cookies: session cookie is HttpOnly, Secure when app.security.cookie-secure=true, SameSite=Strict
-- HikariCP connection pooling with timeout limits
-- Rate limiting: an in-memory rate limiter is included for convenience (RateLimitService). This implementation assumes a single-instance deployment (which matches the current Render configuration). If you deploy multiple instances, switch to a distributed rate limiter (Redis) or enforce rate limits at the gateway/load-balancer edge.
-- X-Forwarded-For: only trusted when explicitly enabled (app.security.trust-x-forwarded-for=true). Enable this only when the app is behind a trusted reverse proxy that correctly sets X-Forwarded-For.
-- Dependency updates and vulnerability reporting: Dependabot is configured to check backend (Maven) and frontend (npm) weekly. Enable Dependabot alerts and automatic security updates in the repository settings (Settings → Code security) to receive and auto-apply critical fixes.
-
-## License
-
-MIT
+- Per-user data isolation enforced in the service layer
+- Input validation on all write endpoints
+- CORS restricted to configured origins
+- Secrets injected via environment variables, never committed to the repo
+- Dependabot alerts plus a CI job that runs the test suite on every pull request
