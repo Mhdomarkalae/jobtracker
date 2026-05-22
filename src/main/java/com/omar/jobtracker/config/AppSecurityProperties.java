@@ -9,6 +9,7 @@ public record AppSecurityProperties(
         String sessionCookieName,
         String sessionCookiePath,
         String csrfCookieName,
-        String csrfHeaderName
+        String csrfHeaderName,
+        boolean trustXForwardedFor
 ) {
 }

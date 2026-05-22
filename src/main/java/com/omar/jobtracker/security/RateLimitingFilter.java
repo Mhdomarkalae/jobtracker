@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import com.omar.jobtracker.config.AppSecurityProperties;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -23,10 +24,12 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
     private final RateLimitService rateLimitService;
+    private final AppSecurityProperties securityProperties;
 
-    public RateLimitingFilter(ObjectMapper objectMapper, RateLimitService rateLimitService) {
+    public RateLimitingFilter(ObjectMapper objectMapper, RateLimitService rateLimitService, AppSecurityProperties securityProperties) {
         this.objectMapper = objectMapper;
         this.rateLimitService = rateLimitService;
+        this.securityProperties = securityProperties;
     }
 
     @Override
@@ -107,7 +110,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     private String resolveClientIp(HttpServletRequest request) {
         String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isBlank()) {
+        if (forwardedFor != null && !forwardedFor.isBlank() && securityProperties.trustXForwardedFor()) {
             return forwardedFor.split(",")[0].trim();
         }
         return request.getRemoteAddr();

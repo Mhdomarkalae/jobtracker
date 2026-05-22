@@ -100,12 +100,17 @@ jobtracker/
 
 ## Security
 
-- JWT-based authentication with configurable expiration
+- JWT-based authentication with configurable expiration (app.jwt.expiration-ms)
 - BCrypt password hashing
 - User data isolation (each user sees only their own data)
-- Input validation on all endpoints
-- CORS restricted to configured origin patterns
+- Input validation on all endpoints (Bean Validation + SafeHttpUrl + server-side sanitization)
+- CORS restricted to configured origin patterns (app.cors.allowed-origin-patterns)
+- CSRF protection for cookie-based endpoints; XSRF token endpoint provided for SPAs
+- Cookies: session cookie is HttpOnly, Secure when app.security.cookie-secure=true, SameSite=Strict
 - HikariCP connection pooling with timeout limits
+- Rate limiting: an in-memory rate limiter is included for convenience (RateLimitService). This is suitable for single-instance deployments only — for production use a distributed rate limiter (Redis, API Gateway, or similar).
+- X-Forwarded-For: only trusted when explicitly enabled (app.security.trust-x-forwarded-for=true). Do not enable unless running behind a trusted reverse proxy.
+- Dependency vulnerability scanning: run OWASP Dependency-Check locally or enable Dependabot/Snyk in CI to catch vulnerabilities automatically.
 
 ## License
 
