@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 /** Replace with your public profiles and contact email. */
 const GITHUB_URL = 'https://github.com/Mhdomarkalae/jobtracker'
-const LINKEDIN_URL = 'https://www.linkedin.com/in/your-profile'
+const LINKEDIN_URL = 'https://www.linkedin.com/in/omar-kalae-7275a2325/'
 
 function GitHubIcon(props) {
   return (
