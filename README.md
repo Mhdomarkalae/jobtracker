@@ -108,9 +108,9 @@ jobtracker/
 - CSRF protection for cookie-based endpoints; XSRF token endpoint provided for SPAs
 - Cookies: session cookie is HttpOnly, Secure when app.security.cookie-secure=true, SameSite=Strict
 - HikariCP connection pooling with timeout limits
-- Rate limiting: an in-memory rate limiter is included for convenience (RateLimitService). This is suitable for single-instance deployments only — for production use a distributed rate limiter (Redis, API Gateway, or similar).
-- X-Forwarded-For: only trusted when explicitly enabled (app.security.trust-x-forwarded-for=true). Do not enable unless running behind a trusted reverse proxy.
-- Dependency vulnerability scanning: run OWASP Dependency-Check locally or enable Dependabot/Snyk in CI to catch vulnerabilities automatically.
+- Rate limiting: an in-memory rate limiter is included for convenience (RateLimitService). This implementation assumes a single-instance deployment (which matches the current Render configuration). If you deploy multiple instances, switch to a distributed rate limiter (Redis) or enforce rate limits at the gateway/load-balancer edge.
+- X-Forwarded-For: only trusted when explicitly enabled (app.security.trust-x-forwarded-for=true). Enable this only when the app is behind a trusted reverse proxy that correctly sets X-Forwarded-For.
+- Dependency updates and vulnerability reporting: Dependabot is configured to check backend (Maven) and frontend (npm) weekly. Enable Dependabot alerts and automatic security updates in the repository settings (Settings → Code security) to receive and auto-apply critical fixes.
 
 ## License
 
