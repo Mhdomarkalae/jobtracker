@@ -25,8 +25,10 @@ const CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
 const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_MODE === 'true'
 let csrfRequestPromise = null
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
