@@ -1,8 +1,10 @@
 # Job Tracker
 
-A full-stack web application for tracking job applications, interviews, and search analytics. Built with a Spring Boot REST API, a React single-page frontend, and a PostgreSQL database, with JWT-based authentication and per-user data isolation.
+**Live demo:** [https://jobtracker-mu-liart.vercel.app](https://jobtracker-mu-liart.vercel.app)
 
-**Live demo:** _add your Vercel URL_ &nbsp;·&nbsp; **API:** _add your Render URL_
+*Note: The first load may take ~30–50s while the free‑tier backend wakes from idle.*
+
+A full-stack web application for tracking job applications, interviews, and search analytics. Built with a Spring Boot REST API, a React single-page frontend, and a PostgreSQL database, with JWT-based authentication and per-user data isolation.
 
 ## Features
 
@@ -12,6 +14,12 @@ A full-stack web application for tracking job applications, interviews, and sear
 - Analytics: application summary stats and a timeline view
 - Per-user data isolation — every record is scoped to the authenticated user
 - Input validation on all write endpoints
+
+Demo mode
+
+- Guest/demo mode: the frontend includes an in-browser demo store with sample data that users can opt into via "Continue as Guest" buttons in the UI.
+- Optional automatic fallback: if the frontend is built with VITE_ENABLE_DEMO_MODE=true, the client will automatically switch to the browser-local demo store when the backend is unreachable. If VITE_ENABLE_DEMO_MODE is not enabled, demo mode can still be used manually via the guest/demo buttons.
+
 
 ## Tech Stack
 
@@ -101,7 +109,7 @@ DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=<your-db-password>
 JWT_SECRET=<base64-encoded 256-bit secret>
 JWT_EXPIRATION_MS=86400000
-APP_ALLOWED_ORIGIN_PATTERNS=http://localhost:5173
+APP_ALLOWED_ORIGIN_PATTERNS=http://localhost:5173,https://jobtracker-mu-liart.vercel.app
 ```
 
 Generate a JWT secret with:
@@ -116,7 +124,7 @@ openssl rand -base64 32
 ./mvnw spring-boot:run
 ```
 
-The API starts at `http://localhost:8080/api`. Wait for the log line `Started JobTrackerApplication`.
+The API starts at `http://localhost:8080/api` in development. In production the API runs on Render; see the Deployment section and DEPLOY.md. Wait for the log line `Started JobTrackerApplication`.
 
 ### 3. Run the frontend
 
@@ -150,9 +158,12 @@ cd frontend && npm run build   # verify the frontend builds
 
 ## Deployment
 
-- **Backend (Render):** builds from the `Dockerfile`; configuration lives in `render.yaml`. Set every environment variable above in the Render dashboard. Pushing to `main` triggers an automatic redeploy.
-- **Frontend (Vercel):** deploy the `frontend/` directory and point its API base URL at the Render backend.
-- **Database (Supabase):** managed PostgreSQL.
+This project is deployed in production:
+
+- **Backend (Render):** Spring Boot API built with the included `Dockerfile` and deployed to Render. Configuration (environment variables, service settings) is managed in the Render dashboard. Pushes to `main` trigger redeploys. See DEPLOY.md for detailed steps.
+- **Frontend (Vercel):** the React/Vite frontend is deployed on Vercel; the project Root Directory is `frontend/`. Vercel rewrites proxy `/api/*` to the Render backend (see `frontend/vercel.json`). See DEPLOY.md for Vercel setup.
+- **Database (Supabase):** managed PostgreSQL with connection pooling in production.
+
 
 ## Security
 
