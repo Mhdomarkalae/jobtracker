@@ -17,7 +17,7 @@ A full-stack web application for tracking job applications, interviews, and sear
 
 Demo mode
 
-- Guest/demo mode: the frontend includes an in-browser demo store with sample data that users can opt into via "Continue as Guest" buttons in the UI.
+- Guest/demo mode: the frontend includes an in-browser demo store with sample data that users can opt into via "Continue as Guest" buttons in the UI. Demo data is stored only in the browser (localStorage) and is not sent to any backend.
 - Automatic fallback: the client will automatically switch to the browser-local demo store when the backend is unreachable. This fallback is enabled by default in the frontend; to disable it set VITE_ENABLE_DEMO_MODE=false at build time.
 
 
@@ -39,7 +39,7 @@ Demo mode
 - Backend deployed on Render (Docker)
 - Frontend deployed on Vercel
 - Database hosted on Supabase (managed PostgreSQL with connection pooling)
-- CI: GitHub Actions runs the build and test suite on every pull request
+- CI: GitHub Actions runs backend tests (./mvnw test) on pull requests; the frontend currently has no automated unit tests.
 - Dependabot enabled for dependency and security updates
 
 ## Architecture

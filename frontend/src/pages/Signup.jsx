@@ -34,6 +34,8 @@ function Signup() {
 
     if (!formValues.password || !formValues.password.trim()) {
       nextErrors.password = 'Password is required.'
+    } else if (formValues.password.length < 8 || formValues.password.length > 128) {
+      nextErrors.password = 'Password must be 8-128 characters.'
     }
 
     if (formValues.confirmPassword !== formValues.password) {
@@ -205,7 +207,7 @@ function Signup() {
                   className="field-input"
                   value={formValues.password}
                   onChange={handleChange}
-                  placeholder="Enter a password"
+                  placeholder="At least 8 characters"
                 />
               {errors.password ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.password}</p> : null}
             </div>

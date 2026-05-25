@@ -33,8 +33,10 @@ function Login() {
       nextErrors.email = 'Email is required.'
     }
 
-    if (!formValues.password) {
+    if (!formValues.password || !formValues.password.trim()) {
       nextErrors.password = 'Password is required.'
+    } else if (formValues.password.length < 8 || formValues.password.length > 128) {
+      nextErrors.password = 'Password must be 8-128 characters.'
     }
 
     return nextErrors

@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /Users/mhdomarkalae/IdeaProjects/jobtracker
+cd "$(dirname "$0")"/..
 
 set -a
 source "$(dirname "$0")/.env"
