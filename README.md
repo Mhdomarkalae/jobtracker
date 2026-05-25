@@ -18,7 +18,7 @@ A full-stack web application for tracking job applications, interviews, and sear
 Demo mode
 
 - Guest/demo mode: the frontend includes an in-browser demo store with sample data that users can opt into via "Continue as Guest" buttons in the UI.
-- Optional automatic fallback: if the frontend is built with VITE_ENABLE_DEMO_MODE=true, the client will automatically switch to the browser-local demo store when the backend is unreachable. If VITE_ENABLE_DEMO_MODE is not enabled, demo mode can still be used manually via the guest/demo buttons.
+- Automatic fallback: the client will automatically switch to the browser-local demo store when the backend is unreachable. This fallback is enabled by default in the frontend; to disable it set VITE_ENABLE_DEMO_MODE=false at build time.
 
 
 ## Tech Stack

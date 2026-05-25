@@ -22,7 +22,7 @@ import {
 const DEMO_MODE_STORAGE_KEY = 'job-tracker-demo-mode'
 const CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 const CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
-const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_MODE === 'true'
+const demoFallbackEnabled = import.meta.env.VITE_ENABLE_DEMO_MODE !== 'false' // enabled by default unless explicitly set to 'false'
 let csrfRequestPromise = null
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
