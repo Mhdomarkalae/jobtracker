@@ -1,11 +1,11 @@
 services:
   - type: web
     name: job-tracker-api
-    env: java
+    runtime: docker
     plan: free
     rootDir: .
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/job-tracker-0.0.1-SNAPSHOT.jar
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
@@ -20,3 +20,7 @@ services:
         value: "86400000"
       - key: APP_ALLOWED_ORIGIN_PATTERNS
         sync: false
+      - key: APP_COOKIE_SAME_SITE
+        value: "None"
+      - key: APP_COOKIE_SECURE
+        value: "true"

@@ -50,7 +50,7 @@ public class AuthCookieService {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(securityProperties.sessionCookieName(), token)
                 .httpOnly(true)
                 .secure(securityProperties.cookieSecure())
-                .sameSite("Strict")
+                .sameSite(securityProperties.cookieSameSite())
                 .path(securityProperties.sessionCookiePath())
                 .maxAge(maxAgeSeconds);
 

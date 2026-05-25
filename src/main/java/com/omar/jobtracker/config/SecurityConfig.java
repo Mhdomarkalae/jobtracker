@@ -53,7 +53,7 @@ public class SecurityConfig {
         csrfTokenRepository.setCookieName(securityProperties.csrfCookieName());
         csrfTokenRepository.setHeaderName(securityProperties.csrfHeaderName());
         csrfTokenRepository.setCookieCustomizer(builder -> builder
-                .sameSite("Strict")
+                .sameSite(securityProperties.cookieSameSite())
                 .secure(securityProperties.cookieSecure())
                 .path(securityProperties.sessionCookiePath()));
 

@@ -2,6 +2,7 @@ FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
 
 COPY pom.xml .
+COPY .mvn ./.mvn
 COPY src ./src
 COPY mvnw .
 
@@ -15,4 +16,4 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "-Xmx512m", "app.jar"]
+ENTRYPOINT ["java", "-Xmx512m", "-jar", "app.jar"]
