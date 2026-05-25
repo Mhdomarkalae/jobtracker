@@ -27,7 +27,6 @@ function Signup() {
 
   function validate() {
     const nextErrors = {}
-    const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/
 
     if (!formValues.email.trim()) {
       nextErrors.email = 'Email is required.'
@@ -35,10 +34,8 @@ function Signup() {
 
     if (!formValues.password) {
       nextErrors.password = 'Password is required.'
-    } else if (formValues.password.length < 12) {
-      nextErrors.password = 'Password must be at least 12 characters.'
-    } else if (!strongPasswordPattern.test(formValues.password)) {
-      nextErrors.password = 'Password must include upper, lower, number, and special character.'
+    } else if (formValues.password.length < 8 || formValues.password.length > 128) {
+      nextErrors.password = 'Password must be between 8 and 128 characters.'
     }
 
     if (formValues.confirmPassword !== formValues.password) {
@@ -210,7 +207,7 @@ function Signup() {
                   className="field-input"
                   value={formValues.password}
                   onChange={handleChange}
-                  placeholder="At least 12 characters"
+                  placeholder="At least 8 characters"
                 />
               {errors.password ? <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.password}</p> : null}
             </div>
